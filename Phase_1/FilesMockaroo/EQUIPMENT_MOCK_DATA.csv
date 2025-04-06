@@ -1,0 +1,401 @@
+EquipmentId,EquipmentType,Weight
+1,Flight data recorder 491U,328
+2,Navigation system 633L,735
+3,Heads-up display 204P,301
+4,Radar system 019Y,458
+5,Brake chute 916B,708
+6,Flight data recorder 577U,595
+7,Targeting pod 553O,664
+8,Oxygen system 523B,696
+9,Landing gear system 649W,418
+10,Thermal imaging system 685O,564
+11,Bomb rack 465B,355
+12,Flare dispenser 657E,456
+13,Chaff dispenser 978F,472
+14,Heads-up display 877H,548
+15,Aircraft beacon 995U,650
+16,Landing gear system 934E,344
+17,Survival kit 424N,664
+18,Survival kit 082R,524
+19,Navigation system 323R,448
+20,External fuel tank 931E,754
+21,Survival kit 805M,646
+22,Stormscope system 845F,575
+23,Aircraft beacon 013E,322
+24,Missile launcher 194G,621
+25,Parachute recovery system 261L,550
+26,Laser designator 285N,644
+27,Engine fire suppression system 596C,366
+28,Ejection seat 478M,456
+29,Bomb rack 405R,565
+30,Targeting pod 818M,641
+31,Stormscope system 494W,472
+32,Chaff dispenser 439X,394
+33,Environmental control system 460Q,441
+34,Electronic warfare pod 165B,722
+35,Autopilot system 022Q,724
+36,Environmental control system 107Q,684
+37,Countermeasure system 045J,494
+38,Weapons bay 055T,778
+39,Survival kit 405X,468
+40,Environmental control system 049A,560
+41,Cabin pressurization system 065V,456
+42,Engine fire suppression system 123H,360
+43,Aircraft beacon 064E,325
+44,Flight data recorder 194T,797
+45,Laser designator 585T,426
+46,Weapons bay 814I,336
+47,Helmet mounted display 309M,773
+48,Targeting pod 955T,342
+49,Helmet mounted display 967O,767
+50,Aircraft beacon 683M,764
+51,Laser designator 457X,588
+52,Laser designator 275G,508
+53,Thermal imaging system 005I,516
+54,Radar system 154U,562
+55,Aircraft beacon 026Y,710
+56,Weapons bay 451H,425
+57,Cabin pressurization system 787A,788
+58,Heads-up display 401P,704
+59,Environmental control system 808K,642
+60,Electronic warfare pod 277B,614
+61,Thermal imaging system 247Y,545
+62,Torpedo mount 047W,574
+63,Anti-collision light 316V,366
+64,Sonobuoy launcher 021N,391
+65,Refueling probe 771R,722
+66,Radar warning receiver 746J,418
+67,Weapons bay 712W,485
+68,Helmet mounted display 848L,695
+69,Thermal imaging system 552B,669
+70,Flare dispenser 902R,474
+71,Cabin pressurization system 268Y,510
+72,Infrared targeting system 449B,451
+73,Sonobuoy launcher 631K,778
+74,Chaff dispenser 916D,610
+75,Thermal imaging system 650I,624
+76,Sonobuoy launcher 709S,449
+77,Autopilot system 553I,505
+78,Night vision system 870P,475
+79,External fuel tank 970V,490
+80,Navigation system 796R,408
+81,Engine fire suppression system 316Z,442
+82,Radar warning receiver 596A,333
+83,Missile launcher 442A,574
+84,Thermal imaging system 310Z,401
+85,Missile launcher 890P,529
+86,Navigation system 352J,329
+87,Communications radio 136O,789
+88,Refueling probe 665A,530
+89,Chaff dispenser 384I,787
+90,Missile launcher 215M,371
+91,Stormscope system 315T,319
+92,Heads-up display 833G,418
+93,Radar system 337N,660
+94,Anti-collision light 385J,552
+95,Flight data recorder 650G,554
+96,Parachute recovery system 704T,732
+97,Environmental control system 235F,544
+98,Flare dispenser 509T,327
+99,Laser designator 385L,731
+100,Flare dispenser 193W,396
+101,Parachute recovery system 696W,380
+102,Heads-up display 777B,666
+103,Sonobuoy launcher 169E,425
+104,Heads-up display 022R,471
+105,Torpedo mount 801S,689
+106,Environmental control system 938U,449
+107,Environmental control system 007R,712
+108,Heads-up display 396V,712
+109,Oxygen system 283Q,756
+110,Flare dispenser 934E,383
+111,Night vision system 610E,437
+112,External fuel tank 206H,664
+113,Autopilot system 732A,389
+114,Heads-up display 469D,354
+115,Thermal imaging system 957D,643
+116,Ejection seat 405R,373
+117,Flight control computer 231T,774
+118,Electronic warfare pod 752V,506
+119,Chaff dispenser 954O,419
+120,Autopilot system 341S,334
+121,Oxygen system 762G,413
+122,Torpedo mount 102F,757
+123,Infrared targeting system 430E,412
+124,Aircraft beacon 609Z,746
+125,Sonobuoy launcher 808L,608
+126,Engine fire suppression system 223I,656
+127,Night vision system 378P,777
+128,Brake chute 899K,324
+129,Autopilot system 814W,412
+130,Sonobuoy launcher 908O,463
+131,Laser designator 228M,360
+132,Electronic warfare pod 317C,672
+133,Flare dispenser 346E,701
+134,Anti-collision light 229H,471
+135,Heads-up display 933K,521
+136,Electronic warfare pod 715A,610
+137,Infrared targeting system 721O,388
+138,Flare dispenser 497H,579
+139,Survival kit 677R,687
+140,Anti-collision light 354G,659
+141,Survival kit 581T,800
+142,Parachute recovery system 957C,581
+143,Reconnaissance pod 485E,724
+144,Infrared targeting system 247B,340
+145,Night vision system 812S,747
+146,Aircraft beacon 435D,648
+147,Radar warning receiver 325S,667
+148,Torpedo mount 290G,379
+149,Flight control computer 835X,513
+150,Environmental control system 053I,323
+151,Weapons bay 763R,417
+152,Weapons bay 773U,736
+153,Brake chute 615M,463
+154,Torpedo mount 018S,534
+155,Thermal imaging system 472E,724
+156,Brake chute 973U,703
+157,Survival kit 906L,747
+158,Autopilot system 500O,670
+159,Heads-up display 970E,366
+160,Survival kit 514V,717
+161,Thermal imaging system 568C,614
+162,Gun pod 247L,594
+163,Infrared targeting system 135C,312
+164,Anti-collision light 084S,584
+165,Countermeasure system 920C,459
+166,Autopilot system 115V,528
+167,Gun pod 696K,609
+168,Electronic warfare pod 577T,484
+169,Survival kit 359B,441
+170,Flare dispenser 137U,644
+171,Reconnaissance pod 476D,481
+172,Radar system 163T,346
+173,Laser designator 986S,572
+174,Bomb rack 758O,586
+175,Helmet mounted display 886H,708
+176,Sonobuoy launcher 495I,444
+177,Navigation system 220T,314
+178,Cabin pressurization system 004U,423
+179,Parachute recovery system 711Y,614
+180,External fuel tank 476G,708
+181,Laser designator 963Y,763
+182,Engine fire suppression system 802U,550
+183,Engine fire suppression system 057X,520
+184,Navigation system 484H,704
+185,Torpedo mount 464X,385
+186,Autopilot system 329B,446
+187,Radar warning receiver 144F,779
+188,Countermeasure system 746Y,584
+189,Flight control computer 350S,434
+190,Electronic warfare pod 575H,407
+191,Radar system 331D,581
+192,Flight data recorder 612Z,682
+193,Flight data recorder 089F,390
+194,Autopilot system 462G,763
+195,Ejection seat 282N,358
+196,Chaff dispenser 099Z,612
+197,Torpedo mount 598Y,454
+198,Weapons bay 388B,503
+199,Missile launcher 859A,646
+200,Oxygen system 471R,742
+201,Navigation system 336P,458
+202,Radar system 716S,594
+203,Data link system 187Z,351
+204,Cabin pressurization system 986B,597
+205,Night vision system 903P,598
+206,Flight data recorder 418X,403
+207,Sonobuoy launcher 123E,340
+208,Sonobuoy launcher 490P,508
+209,Navigation system 490B,342
+210,Radar warning receiver 539K,393
+211,Reconnaissance pod 308K,656
+212,Flare dispenser 694Y,401
+213,Radar warning receiver 367P,556
+214,Cabin pressurization system 917B,703
+215,Laser designator 276Z,498
+216,Stormscope system 663W,376
+217,Communications radio 409C,401
+218,Data link system 401J,556
+219,Night vision system 536H,414
+220,Reconnaissance pod 648K,410
+221,Stormscope system 946N,411
+222,Laser designator 399A,412
+223,Refueling probe 867H,556
+224,Electronic warfare pod 090I,469
+225,Sonobuoy launcher 217X,302
+226,Countermeasure system 933D,759
+227,Flare dispenser 083H,511
+228,Targeting pod 444U,680
+229,Radar system 302T,621
+230,Navigation system 655O,401
+231,Ejection seat 733I,381
+232,Navigation system 472O,382
+233,Weapons bay 592L,553
+234,Weapons bay 944R,379
+235,Data link system 660M,708
+236,Engine fire suppression system 170D,511
+237,Targeting pod 687I,539
+238,Electronic warfare pod 909E,639
+239,Brake chute 390S,500
+240,Oxygen system 777H,321
+241,Flight data recorder 722Z,473
+242,Autopilot system 465U,662
+243,Bomb rack 211E,305
+244,Environmental control system 570H,507
+245,Flare dispenser 630Q,687
+246,Helmet mounted display 304A,441
+247,Radar warning receiver 254C,508
+248,Infrared targeting system 371E,794
+249,Engine fire suppression system 862C,704
+250,Helmet mounted display 679T,760
+251,Communications radio 959J,712
+252,Chaff dispenser 016F,623
+253,Survival kit 884L,392
+254,Bomb rack 577C,513
+255,Landing gear system 225W,655
+256,Aircraft beacon 191W,514
+257,Electronic warfare pod 323R,440
+258,Cabin pressurization system 323L,692
+259,Flare dispenser 387L,307
+260,Engine fire suppression system 324I,445
+261,External fuel tank 628X,592
+262,Flight data recorder 180S,333
+263,Anti-collision light 641K,590
+264,Reconnaissance pod 296G,763
+265,Flight control computer 549O,546
+266,Sonobuoy launcher 852N,435
+267,Aircraft beacon 166Y,741
+268,Aircraft beacon 375O,726
+269,Brake chute 099L,771
+270,Torpedo mount 877Y,691
+271,Parachute recovery system 181I,372
+272,Laser designator 194V,323
+273,Survival kit 243X,497
+274,Laser designator 360E,747
+275,Weapons bay 841E,620
+276,Brake chute 003Z,450
+277,Flare dispenser 817A,431
+278,Engine fire suppression system 289X,719
+279,Night vision system 409G,754
+280,Heads-up display 160L,611
+281,Survival kit 797E,332
+282,Weapons bay 918D,646
+283,Chaff dispenser 780C,745
+284,Landing gear system 489B,615
+285,Survival kit 579O,590
+286,Anti-collision light 734B,643
+287,Flight data recorder 277W,376
+288,Stormscope system 541I,687
+289,Helmet mounted display 353H,643
+290,Gun pod 423V,324
+291,Landing gear system 899R,658
+292,Oxygen system 905O,573
+293,Cabin pressurization system 706T,384
+294,Cabin pressurization system 493Q,310
+295,Anti-collision light 334W,651
+296,Missile launcher 678W,691
+297,Landing gear system 726P,669
+298,Chaff dispenser 460O,414
+299,Landing gear system 038E,350
+300,Aircraft beacon 379A,411
+301,Weapons bay 760S,795
+302,Environmental control system 895K,772
+303,Missile launcher 357D,409
+304,Night vision system 291K,455
+305,Weapons bay 664T,366
+306,Missile launcher 158G,626
+307,Flight data recorder 312U,652
+308,Weapons bay 435I,765
+309,Bomb rack 239V,494
+310,Torpedo mount 216A,489
+311,Flare dispenser 707W,794
+312,Gun pod 984P,659
+313,Helmet mounted display 100W,492
+314,Weapons bay 418M,614
+315,Landing gear system 091L,546
+316,Sonobuoy launcher 740W,788
+317,Gun pod 533R,630
+318,Communications radio 431X,682
+319,Reconnaissance pod 722C,323
+320,Targeting pod 789P,774
+321,Gun pod 946A,580
+322,Electronic warfare pod 501B,673
+323,Radar system 745H,686
+324,Reconnaissance pod 439X,359
+325,Countermeasure system 076Y,747
+326,Parachute recovery system 555O,575
+327,Cabin pressurization system 713X,422
+328,Data link system 235Z,779
+329,Laser designator 113T,419
+330,Gun pod 062G,523
+331,Night vision system 920G,371
+332,Brake chute 848C,318
+333,Heads-up display 163O,572
+334,Flight control computer 826V,702
+335,Environmental control system 327S,485
+336,Engine fire suppression system 278K,653
+337,Thermal imaging system 198Q,630
+338,Infrared targeting system 902Y,431
+339,Flare dispenser 599R,468
+340,External fuel tank 405Q,570
+341,Torpedo mount 586H,588
+342,Ejection seat 205Q,709
+343,Oxygen system 633N,466
+344,Communications radio 601E,400
+345,Flight control computer 320C,486
+346,Engine fire suppression system 075W,758
+347,Thermal imaging system 756H,697
+348,Survival kit 099H,750
+349,Landing gear system 686V,711
+350,External fuel tank 843X,577
+351,Aircraft beacon 248V,555
+352,Torpedo mount 002Z,644
+353,Aircraft beacon 474K,383
+354,Torpedo mount 522X,316
+355,Ejection seat 151R,469
+356,Oxygen system 857D,719
+357,Refueling probe 889Q,406
+358,Refueling probe 628A,695
+359,Gun pod 269W,396
+360,Countermeasure system 960L,398
+361,Electronic warfare pod 479J,625
+362,Communications radio 624I,496
+363,Cabin pressurization system 452U,534
+364,Torpedo mount 133J,616
+365,Flight control computer 061P,601
+366,Missile launcher 708T,569
+367,Radar warning receiver 204C,402
+368,Sonobuoy launcher 862G,378
+369,Environmental control system 795A,357
+370,Infrared targeting system 161N,794
+371,Ejection seat 647U,343
+372,Radar warning receiver 402T,708
+373,Radar system 614U,631
+374,Communications radio 220N,624
+375,Landing gear system 854T,644
+376,Electronic warfare pod 074V,731
+377,Refueling probe 851Q,492
+378,Chaff dispenser 974S,701
+379,Refueling probe 796T,723
+380,Heads-up display 397I,579
+381,Electronic warfare pod 799Y,520
+382,Refueling probe 293X,502
+383,Reconnaissance pod 620O,616
+384,Anti-collision light 345Y,603
+385,Flare dispenser 802L,766
+386,Aircraft beacon 037O,445
+387,Thermal imaging system 364W,794
+388,External fuel tank 802A,562
+389,Reconnaissance pod 499E,625
+390,Oxygen system 998U,332
+391,Electronic warfare pod 670R,359
+392,Targeting pod 964B,773
+393,External fuel tank 771W,639
+394,Brake chute 597S,527
+395,Brake chute 284T,374
+396,Survival kit 542Y,323
+397,Flight control computer 359W,465
+398,Chaff dispenser 254Z,643
+399,Flight control computer 796L,798
+400,Electronic warfare pod 774P,684
