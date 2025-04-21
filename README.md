@@ -124,8 +124,11 @@ Data was added to the database using three distinct methods:
   📜 **[View `insert_squadron_fuel.sql`](Phase1/Programming/insert_squadron_fuel.sql)**  
 
 - **Screenshots**:  
-  ![running insert_squadron_fuel.sql](Phase1/Programming/sql_run) *running insert_squadron_fuel.sql in pgAdmin query tool.*
-  ![result](Phase1/Programming/sql_res) *data successfuly added.*
+  ![running insert_squadron_fuel.sql](Phase1/Programming/sql_run)
+  *running insert_squadron_fuel.sql in pgAdmin query tool.*
+  
+  ![result](Phase1/Programming/sql_res)
+  *data successfuly added.*
 
 ### 2. Mockaroo (Aircraft, Helicopter, Plane, Equipment)
 - **Tool**: [Mockaroo](https://www.mockaroo.com/) for generating realistic mock data.
@@ -140,12 +143,23 @@ Data was added to the database using three distinct methods:
   📜 **[View `PLANE_MOCK_DATA.csv`](Phase1/FilesMockaroo/PLANE_MOCK_DATA_data.csv)**  
   📜 **[View `EQUIPMENT_MOCK_DATA.csv`](Phase1/FilesMockaroo/EQUIPMENT_MOCK_DATA_data.csv)**  
 - **Screenshots**:  
-  ![aircraft mockaroo](Phase1/FilesMockaroo/aircraft.png) *mockaroo aircraft configs.*
-  ![helicopter mockaroo](Phase1/FilesMockaroo/helicopter.png) *helicopter aircraft configs.*
-  ![plane mockaroo](Phase1/FilesMockaroo/plane.png) *mockaroo aircraft configs. applied the formula 'this+400' to aircraftId to match id scope of 401-800.*
-  ![equipment mockaroo](Phase1/FilesMockaroo/aircraft.png) *mockaroo equipment configs. equipment name is generated from a combination of its general type {eq1} and its serial number{eq2}, consisting of three digits and a letter (e.g 107Z). the formula 'toUpper(this)' was applied on {eq2} for the letter in the serial number to be converted to its uppercase equivelant.*
-  ![image](https://github.com/user-attachments/assets/a0617035-d214-45ca-a980-b92d576cdefd) *uploading the generated csv mock data for aircraft.*
-  ![image](https://github.com/user-attachments/assets/794b8287-1991-415c-a5fb-1f55ec3fdc3e) *result of row count for aircraft after upload.*
+  ![aircraft mockaroo](Phase1/FilesMockaroo/aircraft.png)
+  *mockaroo aircraft configs.*
+  
+  ![helicopter mockaroo](Phase1/FilesMockaroo/helicopter.png)
+  *helicopter aircraft configs.*
+  
+  ![plane mockaroo](Phase1/FilesMockaroo/plane.png)
+  *mockaroo aircraft configs. applied the formula 'this+400' to aircraftId to match id scope of 401-800.*
+  
+  ![equipment mockaroo](Phase1/FilesMockaroo/aircraft.png)
+  *mockaroo equipment configs. equipment name is generated from a combination of its general type {eq1} and its serial number{eq2}, consisting of three digits and a letter (e.g 107Z). the formula 'toUpper(this)' was applied on {eq2} for the letter in the serial number to be converted to its uppercase equivelant.*
+  
+  ![image](https://github.com/user-attachments/assets/a0617035-d214-45ca-a980-b92d576cdefd)
+  *uploading the generated csv mock data for aircraft.*
+  
+  ![image](https://github.com/user-attachments/assets/794b8287-1991-415c-a5fb-1f55ec3fdc3e)
+  *result of row count for aircraft after upload.*
 
 
 ### 3. CSV Files (Equipped_With, Pilot)
@@ -157,10 +171,13 @@ Data was added to the database using three distinct methods:
   📜 **[View `Pilot_data.csv`](Phase1/DataImportFiles/Pilot_data.csv)**  
   📜 **[View `EquippedWith_data.csv`](Phase1/DataImportFiles/EquippedWith_data.csv)**  
 - **Screenshots**:
-- *Showing CSV import process for EquippedWith in pgAdmin:*
+  *Showing CSV import process for EquippedWith in pgAdmin:*
   ![image](https://github.com/user-attachments/assets/d28d451f-9048-456c-88d4-5d0b4452f058)
+  
   ![image](https://github.com/user-attachments/assets/1c7cc125-8a96-4575-a85c-15d48816429b)
-  ![image](https://github.com/user-attachments/assets/160c877b-aa06-4b2d-aff8-3a9b4e12a492) *result of row count for EquippedWith after upload.*
+  
+  ![image](https://github.com/user-attachments/assets/160c877b-aa06-4b2d-aff8-3a9b4e12a492)
+  *result of row count for EquippedWith after upload.*
 
 
   **Note:** Since FuelType is no more than a lookup table meant to inhance storage efficiency by storing the finite set of fuel names for the use of other tables, we decided it makes more sense to provide all of its data as part of the [`insertTables.sql`](Phase1/Scripts/insertTables.sql) mentioned above. That is also the reason that we decided it should have 20 rows and not 400. (It does not make since to treat this table like others, for it is the same as a "status" table, providing a finite, mostly predefined set of options).
@@ -174,8 +191,8 @@ Data was added to the database using three distinct methods:
 - **Restore**:
   - Running the backup file on an empty dataset:
 ![image](https://github.com/user-attachments/assets/eccc5525-536d-47e4-b827-4661f1c9a52b)
-![image](https://github.com/user-attachments/assets/16ca87f6-cd85-47a1-88f3-3cc4ce4c8bb1)
 
+![image](https://github.com/user-attachments/assets/16ca87f6-cd85-47a1-88f3-3cc4ce4c8bb1)
   *Showing restore execution and verification.*
 
 ---
