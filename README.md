@@ -124,8 +124,8 @@ Data was added to the database using three distinct methods:
   📜 **[View `insert_squadron_fuel.sql`](Phase1/Programming/insert_squadron_fuel.sql)**  
 
 - **Screenshots**:  
-  ![running insert_squadron_fuel.sql](Phase1/Programming/sql_run.png) *running insert_squadron_fuel.sql in pgAdmin query tool.*
-  ![result](Phase1/Programming/sql_res.png) *data successfuly added.*
+  ![running insert_squadron_fuel.sql](Phase1/Programming/sql_run) *running insert_squadron_fuel.sql in pgAdmin query tool.*
+  ![result](Phase1/Programming/sql_res) *data successfuly added.*
 
 ### 2. Mockaroo (Aircraft, Helicopter, Plane, Equipment)
 - **Tool**: [Mockaroo](https://www.mockaroo.com/) for generating realistic mock data.
