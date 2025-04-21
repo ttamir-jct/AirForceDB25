@@ -58,8 +58,8 @@ The following SQL scripts are provided in the repository:
   📜 **[View `insertTables.sql`](Phase1/Scripts/insertTables.sql)**  
 - **Drop Tables**: Removes all tables in the correct order.  
   📜 **[View `dropTables.sql`](Phase1/Scripts/dropTables.sql)**  
-- **Select All**: Retrieves all data from each table.  
-  📜 **[View `selectAll.sql`](Phase1/Scripts/selectAll.sql)**  
+- **Select All Tables**: Retrieves all data from each table.  
+  📜 **[View `selectTables.sql`](Phase1/Scripts/selectTables.sql)**  
 
 ## Data Insertion Methods
 Data was added to the database using three distinct methods:
@@ -68,22 +68,22 @@ Data was added to the database using three distinct methods:
 - **Tool**: Custom Python script to generate SQL insert statements.
 - **Details**: 
   - **Squadron**: 400 rows with unique `SquadronId`, names (e.g., "Hawk-504B-001"), and base locations from a list of 22 options.
-  - **FuelStock**: 400 rows with `StockId`, locations (e.g., "Warehouse A-1"), stock levels (5000-20000 liters), and `FuelTypeId` linked to 20 fuel types.
+  - **FuelStock**: 400 rows with `StockId`, locations (e.g., "Warehouse A-1"), stock levels (a fraction between 0 and 1 to represent fullness ), and `FuelTypeId` linked to the existing 20 fuel types.
 - **File**:  
-  📜 **[View `insert_squadron_fuel.sql`](Phase1/scripts/insert_squadron_fuel.sql)**  
+  📜 **[View `insert_squadron_fuel.sql`](Phase1/Programming/insert_squadron_fuel.sql)**  
 - **Screenshot**:  
-  [^add screenshot^] *Showing execution of the Python-generated SQL in pgAdmin.*
+  [^TODO: add screenshots^] *Showing execution of the Python-generated SQL in pgAdmin.*
 
 ### 2. Mockaroo (Aircraft, Helicopter, Plane, Equipment)
 - **Tool**: [Mockaroo](https://www.mockaroo.com/) for generating realistic mock data.
 - **Details**: 
   - **Aircraft**: 800 rows (`AircraftId` 1-800) with model names, inspection dates, and fuel capacities.
-  - **Helicopter**: Subset of Aircraft with boarding and payload capacities, and hover times.
-  - **Plane**: Subset of Aircraft with prep times and max ranges.
+  - **Helicopter**: Subset of Aircraft with boarding and payload capacities, and hover times. Used IDs 1-400.
+  - **Plane**: Subset of Aircraft with prep times and max ranges. Used IDs 401-800.
   - **Equipment**: 400 rows (`EquipmentId` 1-400) with types (e.g., "Radar-001") and weights (100-1000 kg).
-- **Files**: Generated as CSV, then converted to SQL or imported directly.
+- **Files**: Generated as CSV and imported to the database.
 - **Screenshot**:  
-  [^add screenshot^] *Showing Mockaroo interface with schema and sample data.*
+  [^TODO: add screenshot^] *Showing Mockaroo interface with schema and sample data.*
 
 ### 3. CSV Files (Equipped_With, Pilot)
 - **Tool**: Pre-generated CSV files imported via PostgreSQL `COPY` or pgAdmin.
@@ -91,10 +91,13 @@ Data was added to the database using three distinct methods:
   - **Equipped_With**: 500 rows linking `AircraftId` (1-800) to `EquipmentId` (1-400) with quantities (1-4).
   - **Pilot**: 500 rows (`PilotId` 1-500) with names (e.g., "James Smith"), training dates, ranks, and optional `AircraftId` (50% linked to 1-800).
 - **Files**:  
-  📜 **[View `pilot_data.csv`](Phase1/data/pilot_data.csv)**  
-  📜 **[View `fuel_equip_data.csv`](Phase1/data/fuel_equip_data.csv)**  
+  📜 **[View `pilot_data.csv`](Phase1/DataImportFiles/Pilot_data.csv)**  
+  📜 **[View `fuel_equip_data.csv`](Phase1/DataImportFiles/EquippedWith_data.csv)**  
 - **Screenshot**:  
-  [^add screenshot^] *Showing CSV import process in pgAdmin or psql output.*
+  [^TODO: add screenshot^] *Showing CSV import process in pgAdmin or psql output.*
+
+  **Note:** Since FuelType is no more than a lookup table meant to inhance storage efficiency by storing the finite set of fuel names for the use of other tables, we decided it makes more sense to provide all of its data as part of the "insertTables" sql mentioned above. That is also the reason that we decided it should have 20 rows and not 400. (It does not make since to treat this table like others, for it is the same as a "status" table, providing a finite, mostly predefined set of options).
+
 
 ## Relationships
 Based on the attached Excel, here’s an explanation of the relationships in the ERD:
