@@ -1,8 +1,8 @@
 # Air Force Resources Database
 
-**Submitted by:** [Tzur Tamir 207876525]  
-**System:** Air Force Resources Management  
-**Unit:** Aircraft Operations  
+**Submitted by:** Tzur Tamir 207876525 
+**System:** Air Force Management  
+**Unit:** Air Force Resources Management 
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -43,25 +43,23 @@ This system enhances efficiency, safety, and coordination within air force opera
 For detailed relationship explanations, see [Relationships](#relationships) below.
 
 ## ERD (Entity-Relationship Diagram)
-![ERD Diagram](Phase1/ERD.png)  
-[^add screenshot^]  
+![ERD Diagram](Phase1/ERD&DSD/ERD_COLORED.png)  
 *The ERD visualizes entities and their relationships as designed in the project.*
 
 ## DSD (Data Structure Diagram)
-![DSD Diagram](Phase1/DSD.png)  
-[^add screenshot^]  
+![DSD Diagram](Phase1/ERD&DSD/DSD_COLORED.png)  
 *The DSD outlines the relational schema derived from the ERD.*
 
 ## SQL Scripts
 The following SQL scripts are provided in the repository:
 - **Create Tables**: Defines all tables and triggers.  
-  📜 **[View `createTables.sql`](Phase1/scripts/createTables.sql)**  
+  📜 **[View `createTables.sql`](Phase1/Scripts/createTables.sql)**  
 - **Insert Data**: Adds initial sample data.  
-  📜 **[View `insertTables.sql`](Phase1/scripts/insertTables.sql)**  
+  📜 **[View `insertTables.sql`](Phase1/Scripts/insertTables.sql)**  
 - **Drop Tables**: Removes all tables in the correct order.  
-  📜 **[View `dropTables.sql`](Phase1/scripts/dropTables.sql)**  
+  📜 **[View `dropTables.sql`](Phase1/Scripts/dropTables.sql)**  
 - **Select All**: Retrieves all data from each table.  
-  📜 **[View `selectAll.sql`](Phase1/scripts/selectAll.sql)**  
+  📜 **[View `selectAll.sql`](Phase1/Scripts/selectAll.sql)**  
 
 ## Data Insertion Methods
 Data was added to the database using three distinct methods:
