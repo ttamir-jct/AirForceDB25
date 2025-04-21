@@ -35,7 +35,7 @@ with open('insert_squadron_fuel.sql', 'w', encoding='utf-8') as sqlfile:
     sqlfile.write("\n-- FuelStock\n")
     base_date = datetime(2025, 5, 1)
     for i in range(1, 401):
-        stock_level = random.randint(5000, 20000)  # 5000-20000 ליטר
+        stock_level = random.randint(30, 100)/100  # רמת המלאי של הדלק
         restock_date = (base_date + timedelta(days=i % 400)).strftime('%Y-%m-%d')
         fuel_type_id = (i % 20) + 1  # 1-20
         location = f"{random.choice(fuel_locations)}-{i % 20 + 1}"
