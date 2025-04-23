@@ -26,9 +26,9 @@ INSERT INTO Squadron (SquadronId, SquadronName, BaseLocation) VALUES (2, 'טיי
 INSERT INTO Squadron (SquadronId, SquadronName, BaseLocation) VALUES (3, 'טייסת נשר', 'בסיס נבטים');
 
 -- FuelStock
-INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (1, 'מחסן A', 10000, '2025-05-01', 1);
-INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (2, 'מחסן B', 8000, '2025-06-01', 2);
-INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (3, 'מחסן C', 12000, '2025-07-01', 3);
+INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (1, 'מחסן A', 0.5, '2025-05-01', 1);
+INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (2, 'מחסן B', 0.7, '2025-06-01', 2);
+INSERT INTO FuelStock (StockId, Location, StockLevel, RestockDate, FuelTypeId) VALUES (3, 'מחסן C', 1, '2025-07-01', 3);
 
 -- Aircraft
 INSERT INTO Aircraft (AircraftId, NextInspectionDate, ModelName, FuelCapacity, SquadronId, StockId, FuelTypeId) VALUES (1, '2025-06-01', 'F-16', 7000, 1, 1, 1);
