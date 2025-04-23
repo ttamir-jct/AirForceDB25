@@ -234,11 +234,12 @@ To enhance the realism of the `FuelStock` table, the schema was updated to inclu
   - This makes `StockLevel` a concrete volume in liters, aligned with `MaxCapacity`.
     ```sql
     UPDATE FuelStock SET StockLevel = LEAST(2500000 * StockLevel, MaxCapacity);
+    
 - **Creating Realistic Distribution**:
   - After conversion, most stocks were around 70% full. To introduce variety in fill levels, the following query was executed:
     ```sql
     UPDATE FuelStock
     SET StockLevel = LEAST(StockLevel * (RANDOM() * (1.44 - 0.8) + 0.8), MaxCapacity);
-
-- an updated version of the files createTables.sql, insertTables.sql was added to the [scripts](Phase1/scripts) directory to ensure compatability with the updated schema.
+    
+- **an updated version of the files createTables.sql, insertTables.sql was added to the [scripts](Phase1/scripts) directory to ensure compatability with the updated schema.**
     ---
