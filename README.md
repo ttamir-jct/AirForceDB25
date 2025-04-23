@@ -213,9 +213,11 @@ Data was added to the database using three distinct methods:
 
 ## Edit: FuelStock Enhancements
 
+### Reasons for the changes
 To enhance the realism of the `FuelStock` table, the schema was updated to include `MaxCapacity`, and `StockLevel` was converted from a percentage to liters. These changes were applied to the existing 400 rows while preserving data integrity.
-**updated ERD:**
 
+**updated ERD:**
+![image](Phase1/ERD&DSD/ERD_NEW_COLORED.png)
 
 ### Changes Made
 - **Addition of MaxCapacity**:
@@ -238,4 +240,5 @@ To enhance the realism of the `FuelStock` table, the schema was updated to inclu
     UPDATE FuelStock
     SET StockLevel = LEAST(StockLevel * (RANDOM() * (1.44 - 0.8) + 0.8), MaxCapacity);
 
+    an updated version of the files createTables.sql, insertTables.sql was added to the [scripts](Phase1/scripts) directory to ensure compatability with the updated schema.
     ---
