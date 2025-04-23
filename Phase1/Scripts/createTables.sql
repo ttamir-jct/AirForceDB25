@@ -25,7 +25,7 @@ CREATE TABLE FuelStock
 (
   StockId INT NOT NULL,
   Location VARCHAR(40) NOT NULL,
-  StockLevel INT NOT NULL,
+  StockLevel DECIMAL(3,2) NOT NULL CHECK (StockLevel >= 0 AND StockLevel <= 1),
   RestockDate DATE NOT NULL,
   FuelTypeId INT NOT NULL,
   PRIMARY KEY (StockId),
