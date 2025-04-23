@@ -240,6 +240,6 @@ To enhance the realism of the `FuelStock` table, the schema was updated to inclu
     ```sql
     UPDATE FuelStock
     SET StockLevel = LEAST(StockLevel * (RANDOM() * (1.44 - 0.8) + 0.8), MaxCapacity);
-    
-- **an updated version of the files createTables.sql, insertTables.sql was added to the [scripts](Phase1/scripts) directory to ensure compatability with the updated schema.**
-    ---
+- an updated version of the files 'createTables.sql', 'insertTables.sql' was added to the [scripts](Phase1/Scripts) directory to ensure compatability with the updated schema.
+
+---
