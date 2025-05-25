@@ -152,8 +152,8 @@ WHERE RestockDate < CURRENT_DATE
 
 -- UPDATE Query 2: Update pilot ranks for those with overdue training
 UPDATE Pilot
-SET Rank = CONCAT(Rank, ' (Probation)')
-WHERE NextTrainingDate < CURRENT_DATE;
+SET Rank = CONCAT(Rank, ' (Prob.)')
+WHERE NextTrainingDate +120 < CURRENT_DATE;
 
 -- UPDATE Query 3: Adjust inspection dates to the same day of week after today
 UPDATE Aircraft
