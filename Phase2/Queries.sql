@@ -89,9 +89,10 @@ WHERE (p.AircraftId, p.MaxRange) IN (
 )
 ORDER BY p.MaxRange DESC;
 
--- Query 7: Aircraft and helicopter usage per fuel stock with recent restock check
+-- Query 7: Aircraft and helicopter usage per fuel stock for soon to be restocked ones
 SELECT 
-    fs.Location AS FuelStockLocation, 
+    fs.stockid,
+	fs.Location AS FuelStockLocation, 
     fs.RestockDate, 
     COUNT(DISTINCT a.AircraftId) AS TotalAircraft, 
     COUNT(DISTINCT CASE WHEN p.AircraftId IS NOT NULL THEN p.AircraftId END) AS PlaneCount, 
@@ -100,8 +101,8 @@ FROM FuelStock fs
 LEFT JOIN Aircraft a ON fs.StockId = a.StockId
 LEFT JOIN Plane p ON a.AircraftId = p.AircraftId
 LEFT JOIN Hellicopter h ON a.AircraftId = h.AircraftId
-WHERE fs.RestockDate >= CURRENT_DATE - INTERVAL '30 days'
-GROUP BY fs.Location, fs.RestockDate
+WHERE fs.RestockDate < CURRENT_DATE + INTERVAL '30 days'
+GROUP BY fs.Location, fs.RestockDate, fs.StockId
 ORDER BY TotalAircraft DESC, RestockDate ASC;
 
 -- Query 8: Monthly inspection and training schedule with readiness status
