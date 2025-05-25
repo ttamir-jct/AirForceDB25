@@ -89,19 +89,20 @@ WHERE (p.AircraftId, p.MaxRange) IN (
 )
 ORDER BY p.MaxRange DESC;
 
--- Query 7: Fuel stock usage efficiency per location (based on stock level and aircraft count)
+-- Query 7: Aircraft and helicopter usage per fuel stock with recent restock check
 SELECT 
-    fs.Location, 
-    fs.StockLevel, 
-    fs.MaxCapacity, 
-    (fs.StockLevel * fs.MaxCapacity) AS CurrentLiters, 
-    COUNT(a.AircraftId) AS AircraftServed, 
-    ROUND((fs.StockLevel * 100.0) / NULLIF(COUNT(a.AircraftId), 0), 2) AS EfficiencyScore
+    fs.Location AS FuelStockLocation, 
+    fs.RestockDate, 
+    COUNT(DISTINCT a.AircraftId) AS TotalAircraft, 
+    COUNT(DISTINCT CASE WHEN p.AircraftId IS NOT NULL THEN p.AircraftId END) AS PlaneCount, 
+    COUNT(DISTINCT CASE WHEN h.AircraftId IS NOT NULL THEN h.AircraftId END) AS HelicopterCount
 FROM FuelStock fs
-LEFT JOIN Aircraft a ON a.FuelStockId = fs.StockId
-GROUP BY fs.Location, fs.StockLevel, fs.MaxCapacity
-HAVING COUNT(a.AircraftId) > 0
-ORDER BY EfficiencyScore;
+LEFT JOIN Aircraft a ON fs.StockId = a.StockId
+LEFT JOIN Plane p ON a.AircraftId = p.AircraftId
+LEFT JOIN Hellicopter h ON a.AircraftId = h.AircraftId
+WHERE fs.RestockDate >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY fs.Location, fs.RestockDate
+ORDER BY TotalAircraft DESC, RestockDate ASC;
 
 -- Query 8: Monthly inspection schedule with aircraft and pilot readiness
 SELECT 
@@ -118,36 +119,35 @@ LEFT JOIN Pilot p ON a.AircraftId = p.AircraftId
 WHERE EXTRACT(YEAR FROM a.NextInspectionDate) = 2025
 ORDER BY InspectionMonth, a.AircraftId;
 
--- DELETE Query 1: Remove aircraft with overdue inspections (more than 30 days)
+-- DELETE Query 1: Remove aircraft with overdue inspections (more than 120 days)
 DELETE FROM Aircraft
-WHERE NextInspectionDate < CURRENT_DATE - INTERVAL '30 days'
+WHERE NextInspectionDate < CURRENT_DATE - INTERVAL '120 days'
     AND AircraftId NOT IN (SELECT AircraftId FROM Pilot WHERE AircraftId IS NOT NULL);
 
--- DELETE Query 2: Remove fuel stocks that are empty and not used by any aircraft
+-- DELETE Query 2: Remove fuel stocks that are nearly empty and are not used by any aircraft
 DELETE FROM FuelStock
-WHERE StockLevel = 0
-    AND StockId NOT IN (SELECT FuelStockId FROM Aircraft WHERE FuelStockId IS NOT NULL);
+WHERE StockLevel < 2000000
+    AND StockId NOT IN (SELECT StockId FROM Aircraft WHERE StockId IS NOT NULL);
 
--- DELETE Query 3: Remove equipment not assigned to any aircraft
+
+-- DELETE Query 3: Remove large equipment not assigned to any aircraft
 DELETE FROM Equipment
-WHERE EquipmentId NOT IN (SELECT EquipmentId FROM Equipped_With);
+WHERE EquipmentId NOT IN (SELECT EquipmentId FROM Equipped_With)
+AND Weight > 700;
 
--- UPDATE Query 1: Increase fuel stock levels by 10% for stocks below 30%
+-- UPDATE Query 1: Increase fuel stock levels for overdue restocks below 30%
 UPDATE FuelStock
-SET StockLevel = LEAST(StockLevel * 1.10, 1)
-WHERE StockLevel < 0.3;
+SET StockLevel = LEAST(StockLevel + (MaxCapacity * 0.75), MaxCapacity)
+WHERE RestockDate < CURRENT_DATE
+    AND (StockLevel / MaxCapacity) * 100 < 30;
 
 -- UPDATE Query 2: Update pilot ranks for those with overdue training
 UPDATE Pilot
 SET Rank = CONCAT(Rank, ' (Probation)')
 WHERE NextTrainingDate < CURRENT_DATE;
 
--- UPDATE Query 3: Adjust aircraft inspection dates by pushing them forward 7 days if pilot is not trained
-UPDATE Aircraft a
-SET NextInspectionDate = NextInspectionDate + INTERVAL '7 days'
-WHERE EXISTS (
-    SELECT 1
-    FROM Pilot p
-    WHERE p.AircraftId = a.AircraftId
-    AND p.NextTrainingDate > CURRENT_DATE
-);
+-- UPDATE Query 3: Adjust inspection dates to the same day of week after today
+UPDATE Aircraft
+SET NextInspectionDate = NextInspectionDate + 
+    INTERVAL '7 days' * CEIL((CAST (CURRENT_DATE - NextInspectionDate as float)) / 7)
+WHERE NextInspectionDate < CURRENT_DATE;
