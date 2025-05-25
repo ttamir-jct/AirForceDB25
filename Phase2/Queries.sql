@@ -9,8 +9,8 @@ SELECT
     s.BaseLocation
 FROM Aircraft a
 JOIN Squadron s ON a.SquadronId = s.SquadronId
-WHERE EXTRACT(MONTH FROM a.NextInspectionDate) = 5 
-    AND EXTRACT(YEAR FROM a.NextInspectionDate) = 2025
+WHERE EXTRACT(MONTH FROM a.NextInspectionDate) = EXTRACT(MONTH FROM CURRENT_DATE) 
+    AND EXTRACT(YEAR FROM a.NextInspectionDate) = EXTRACT(YEAR FROM CURRENT_DATE)
 ORDER BY a.NextInspectionDate;
 
 -- Query 2: Pilots with overdue training, including their assigned aircraft
@@ -104,20 +104,29 @@ WHERE fs.RestockDate >= CURRENT_DATE - INTERVAL '30 days'
 GROUP BY fs.Location, fs.RestockDate
 ORDER BY TotalAircraft DESC, RestockDate ASC;
 
--- Query 8: Monthly inspection schedule with aircraft and pilot readiness
+-- Query 8: Monthly inspection and training schedule with readiness status
 SELECT 
-    EXTRACT(MONTH FROM a.NextInspectionDate) AS InspectionMonth, 
     a.AircraftId, 
     a.ModelName, 
     p.FullName AS PilotName, 
     CASE 
-        WHEN p.NextTrainingDate < a.NextInspectionDate THEN 'Pilot Ready'
-        ELSE 'Pilot Training Needed'
-    END AS PilotReadiness
+        WHEN a.NextInspectionDate < CURRENT_DATE
+		THEN 'inspection is overdue'
+        ELSE 'next inspection in ' || CAST(EXTRACT(DAY FROM AGE(a.NextInspectionDate,CURRENT_DATE)) as TEXT) || ' days'
+    END
+	AS InspectionStatus, 
+    CASE 
+        WHEN p.NextTrainingDate < CURRENT_DATE THEN 'training is overdue'
+        ELSE 'next training in ' || CAST(EXTRACT(DAY FROM AGE(p.NextTrainingDate,CURRENT_DATE)) as TEXT)||' days'
+    END AS TrainingStatus, 
+    CASE 
+        WHEN a.NextInspectionDate < CURRENT_DATE OR (p.NextTrainingDate < CURRENT_DATE AND p.AircraftId IS NOT NULL) THEN 'Not Ready'
+        ELSE 'Ready'
+    END AS ReadinessSummary
 FROM Aircraft a
 LEFT JOIN Pilot p ON a.AircraftId = p.AircraftId
 WHERE EXTRACT(YEAR FROM a.NextInspectionDate) = 2025
-ORDER BY InspectionMonth, a.AircraftId;
+ORDER BY a.AircraftId;
 
 -- DELETE Query 1: Remove aircraft with overdue inspections (more than 120 days)
 DELETE FROM Aircraft
