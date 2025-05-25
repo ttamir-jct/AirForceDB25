@@ -126,8 +126,8 @@ Data was added to the database using three distinct methods:
 ### 1. Python Script (Squadron, FuelStock)
 - **Tool**: Custom Python script to generate SQL insert statements.
 - **Details**: 
-  - **Squadron**: 400 rows with unique `SquadronId`, names (e.g., "Hawk-504B-001"), and base locations from a list of 22 options.
-  - **FuelStock**: 400 rows with `StockId`, locations (e.g., "Warehouse A-1"), stock levels (a fraction between 0 and 1 to represent fullness ), and `FuelTypeId` linked to the existing 20 fuel types.
+  - **Squadron**: 400 rows with unique SquadronId, names (e.g., "Hawk-504B-001"), and base locations from a list of 22 options.
+  - **FuelStock**: 400 rows with StockId, locations (e.g., "Warehouse A-1"), stock levels (a fraction between 0 and 1 to represent fullness ), and FuelTypeId linked to the existing 20 fuel types.
 - **Files**:  
   📜 **[View `generate_sql.py`](Phase1/Programming/generate_sql.py)**
   📜 **[View `insert_squadron_fuel.sql`](Phase1/Programming/insert_squadron_fuel.sql)**  
@@ -144,10 +144,10 @@ Data was added to the database using three distinct methods:
 ### 2. Mockaroo (Aircraft, Helicopter, Plane, Equipment)
 - **Tool**: [Mockaroo](https://www.mockaroo.com/) for generating realistic mock data.
 - **Details**: 
-  - **Aircraft**: 800 rows (`AircraftId` 1-800) with model names, inspection dates, and fuel capacities.
-  - **Helicopter**: Subset of Aircraft with boarding and payload capacities, and hover times. 400 rows (`AircraftId` 1-400).
-  - **Plane**: Subset of Aircraft with prep times and max ranges. 400 rows (`AircraftId` 401-800).
-  - **Equipment**: 400 rows (`EquipmentId` 1-400) with types (e.g., "Radar-001") and weights (100-1000 kg).
+  - **Aircraft**: 800 rows (AircraftId 1-800) with model names, inspection dates, and fuel capacities.
+  - **Helicopter**: Subset of Aircraft with boarding and payload capacities, and hover times. 400 rows (AircraftId 1-400).
+  - **Plane**: Subset of Aircraft with prep times and max ranges. 400 rows (AircraftId 401-800).
+  - **Equipment**: 400 rows (EquipmentId 1-400) with types (e.g., "Radar-001") and weights (100-1000 kg).
 - **Files**:
   📜 **[View `AIRCRAFT_MOCK_DATA.csv`](Phase1/FilesMockaroo/AIRCRAFT_MOCK_DATA_data.csv)**  
   📜 **[View `HELICOPTER_MOCK_DATA.csv`](Phase1/FilesMockaroo/HELICOPTER_MOCK_DATA_data.csv)**  
@@ -182,8 +182,8 @@ Data was added to the database using three distinct methods:
 ### 3. CSV Files (Equipped_With, Pilot)
 - **Tool**: Pre-generated CSV files imported via the pgAdmin 'import data' option.
 - **Details**: 
-  - **Equipped_With**: 500 rows linking `AircraftId` (1-800) to `EquipmentId` (1-400) with quantities (1-4).
-  - **Pilot**: 500 rows (`PilotId` 1-500) with names (e.g., "James Smith"), next training dates, ranks, and optional `AircraftId` (50% linked to 1-800).
+  - **Equipped_With**: 500 rows linking AircraftId (1-800) to EquipmentId (1-400) with quantities (1-4).
+  - **Pilot**: 500 rows (PilotId 1-500) with names (e.g., "James Smith"), next training dates, ranks, and optional AircraftId (50% linked to 1-800).
 - **Files**:  
   📜 **[View `Pilot_data.csv`](Phase1/DataImportFiles/Pilot_data.csv)**  
   📜 **[View `EquippedWith_data.csv`](Phase1/DataImportFiles/EquippedWith_data.csv)**  
@@ -223,24 +223,24 @@ Data was added to the database using three distinct methods:
 ## Edit: FuelStock Enhancements
 
 ### Reasons for the changes
-To enhance the realism of the `FuelStock` table, the schema was updated to include `MaxCapacity`, and `StockLevel` was converted from a percentage to liters. These changes were applied to the existing 400 rows while preserving data integrity.
+To enhance the realism of the FuelStock table, the schema was updated to include MaxCapacity, and StockLevel was converted from a percentage to liters. These changes were applied to the existing 400 rows while preserving data integrity.
 
 **updated ERD:**
 ![image](Phase1/ERD&DSD/ERD_NEW_COLORED.png)
 
 ### Changes Made
 - **Addition of MaxCapacity**:
-  - A new column, `MaxCapacity`, was added to define the maximum storage capacity of each fuel stock in liters.
-  - The default `MaxCapacity` was set to 2,500,000 liters to reflect a realistic scale for air force fuel stocks.
+  - A new column, MaxCapacity, was added to define the maximum storage capacity of each fuel stock in liters.
+  - The default MaxCapacity was set to 2,500,000 liters to reflect a realistic scale for air force fuel stocks.
     ```sql
     ALTER TABLE FuelStock ADD COLUMN MaxCapacity INT NOT NULL DEFAULT 2500000;
-  - For existing rows, `MaxCapacity` was set as the greater of 1,500,000 liters or 3,500,000 * `StockLevel` (where `StockLevel` was the original percentage scaled appropriately).
+  - For existing rows, MaxCapacity was set as the greater of 1,500,000 liters or 3,500,000 * StockLevel (where StockLevel was the original percentage scaled appropriately).
     ```sql
     UPDATE FuelStock SET MaxCapacity = GREATEST(3500000 * StockLevel, 1500000);
     
 - **Conversion of StockLevel**:
-  - Originally, `StockLevel` represented the fill percentage (0-1). It was converted to liters by calculating the lesser of 2,500,000 * `StockLevel` (scaled) or the `MaxCapacity`.
-  - This makes `StockLevel` a concrete volume in liters, aligned with `MaxCapacity`.
+  - Originally, StockLevel represented the fill percentage (0-1). It was converted to liters by calculating the lesser of 2,500,000 * StockLevel (scaled) or the MaxCapacity.
+  - This makes StockLevel a concrete volume in liters, aligned with MaxCapacity.
     ```sql
     UPDATE FuelStock SET StockLevel = LEAST(2500000 * StockLevel, MaxCapacity);
     
@@ -264,7 +264,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Identifies aircraft scheduled for inspection in the current month (May 2025), showing aircraft ID, model name, inspection date (year and month), squadron name, and base location. Supports maintenance scheduling in the GUI.
 
 -   **Query**:
-`SELECT  a.AircraftId, a.ModelName, a.NextInspectionDate, EXTRACT(YEAR  FROM a.NextInspectionDate) AS InspectionYear, EXTRACT(MONTH  FROM a.NextInspectionDate) AS InspectionMonth, s.SquadronName, s.BaseLocation FROM Aircraft a JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE  EXTRACT(MONTH  FROM a.NextInspectionDate) =  EXTRACT(MONTH  FROM  CURRENT_DATE) AND  EXTRACT(YEAR  FROM a.NextInspectionDate) =  EXTRACT(YEAR  FROM  CURRENT_DATE) ORDER  BY a.NextInspectionDate;`
+	```sql
+	SELECT  a.AircraftId, a.ModelName, a.NextInspectionDate, EXTRACT(YEAR  FROM a.NextInspectionDate) AS InspectionYear, EXTRACT(MONTH  FROM a.NextInspectionDate) AS InspectionMonth, s.SquadronName, s.BaseLocation FROM Aircraft a JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE  EXTRACT(MONTH  FROM a.NextInspectionDate) = EXTRACT(MONTH  FROM  CURRENT_DATE) AND  EXTRACT(YEAR  FROM a.NextInspectionDate) =  EXTRACT(YEAR  FROM  CURRENT_DATE) ORDER  BY a.NextInspectionDate;
 
 -   **Execution + Result Screenshot**:
 ![image](https://github.com/user-attachments/assets/d7290645-71df-45be-9910-fceda5f0ae75)
@@ -275,7 +276,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Lists pilots with overdue training, showing pilot ID, name, training date, days overdue, and assigned aircraft model. Uses LEFT JOIN to include unassigned pilots. Helps prioritize retraining in the GUI.
 
 -   **Query**:
-`SELECT  p.PilotId, p.FullName, p.NextTrainingDate, EXTRACT(DAY  FROM AGE(CURRENT_DATE, p.NextTrainingDate)) AS DaysOverdue, a.ModelName AS AssignedAircraft FROM Pilot p LEFT  JOIN Aircraft a ON p.AircraftId = a.AircraftId WHERE p.NextTrainingDate <  CURRENT_DATE  ORDER  BY DaysOverdue DESC;`
+	```sql
+	SELECT  p.PilotId, p.FullName, p.NextTrainingDate, EXTRACT(DAY  FROM AGE(CURRENT_DATE, p.NextTrainingDate)) AS DaysOverdue, a.ModelName AS AssignedAircraft FROM Pilot p LEFT  JOIN Aircraft a ON p.AircraftId = a.AircraftId WHERE p.NextTrainingDate <  CURRENT_DATE  ORDER  BY DaysOverdue DESC;
 
 -   **Execution + Result Screenshot**:
 ![image](https://github.com/user-attachments/assets/b044f4ae-f355-41c2-9463-6b696d6ff2d8)
@@ -286,7 +288,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Identifies fuel stocks needing restocking within 7 days (from May 25, 2025), showing stock ID, location, stock level, restock date, fuel type, and aircraft count. Supports fuel management in the GUI.
 
 -   **Query**:
-`SELECT  fs.StockId, fs.Location, fs.StockLevel, fs.RestockDate, ft.FuelTypeName, (SELECT  COUNT(*) FROM Aircraft a WHERE a.StockId = fs.StockId) AS AircraftCount FROM FuelStock fs JOIN FuelType ft ON fs.FuelTypeId = ft.FuelTypeId WHERE fs.RestockDate <=  CURRENT_DATE  +  INTERVAL  '7 days'  AND fs.RestockDate >=  CURRENT_DATE  ORDER  BY fs.RestockDate;`
+	```sql
+	SELECT  fs.StockId, fs.Location, fs.StockLevel, fs.RestockDate, ft.FuelTypeName, (SELECT  COUNT(*) FROM Aircraft a WHERE a.StockId = fs.StockId) AS AircraftCount FROM FuelStock fs JOIN FuelType ft ON fs.FuelTypeId = ft.FuelTypeId WHERE fs.RestockDate <=  CURRENT_DATE  +  INTERVAL  '7 days'  AND fs.RestockDate >= CURRENT_DATE  ORDER  BY fs.RestockDate;
 
 
 -   **Execution + Result Screenshot**:
@@ -298,7 +301,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Calculates average equipment weight per aircraft model, showing model name, aircraft count, and average weight. Uses GROUP BY and HAVING to filter models with equipment. Aids load analysis in the GUI.
 
 -   **Query**:
-`SELECT  a.ModelName, COUNT(DISTINCT ew.AircraftId) AS AircraftCount, ROUND(AVG(e.Weight * ew.Quantity), 2) AS AvgEquipmentWeight FROM Aircraft a LEFT  JOIN Equipped_With ew ON a.AircraftId = ew.AircraftId LEFT  JOIN Equipment e ON ew.EquipmentId = e.EquipmentId GROUP  BY a.ModelName HAVING  COUNT(DISTINCT ew.AircraftId) >  0  ORDER  BY AvgEquipmentWeight DESC;`
+	```sql
+	SELECT  a.ModelName, COUNT(DISTINCT ew.AircraftId) AS AircraftCount, ROUND(AVG(e.Weight * ew.Quantity), 2) AS AvgEquipmentWeight FROM Aircraft a LEFT  JOIN Equipped_With ew ON a.AircraftId = ew.AircraftId LEFT  JOIN Equipment e ON ew.EquipmentId = e.EquipmentId GROUP  BY a.ModelName HAVING  COUNT(DISTINCT ew.AircraftId) >  0  ORDER  BY AvgEquipmentWeight DESC;
 
 -   **Execution + Result Screenshot**:
 ![image](https://github.com/user-attachments/assets/4ccce907-a2d1-4997-9961-d0ede3d4b925)
@@ -309,7 +313,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Lists helicopters with boarding capacity above the average, showing helicopter ID, model name, capacity, and squadron name. Uses a subquery to calculate the average. Supports troop transport planning in the GUI.
 
 -   **Query**:
-`SELECT  h.AircraftId, a.ModelName, h.BoardingCapacity, s.SquadronName FROM Hellicopter h JOIN Aircraft a ON h.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE h.BoardingCapacity > ( SELECT  AVG(BoardingCapacity) FROM Hellicopter ) ORDER  BY h.BoardingCapacity DESC;`
+	```sql
+	SELECT  h.AircraftId, a.ModelName, h.BoardingCapacity, s.SquadronName FROM Hellicopter h JOIN Aircraft a ON h.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE h.BoardingCapacity > ( SELECT  AVG(BoardingCapacity) FROM Hellicopter ) ORDER  BY h.BoardingCapacity DESC;
 
 
 -   **Execution + Result Screenshot**: 
@@ -321,7 +326,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Identifies the plane with the longest range in each squadron, showing squadron name, aircraft ID, model name, range, and pilot name. Uses a nested subquery with LIMIT 1. Supports long-range mission planning in the GUI.
 
 -   **Query**:
-`SELECT  s.SquadronName, p.AircraftId, a.ModelName, p.MaxRange, pi.FullName AS PilotName FROM Plane p JOIN Aircraft a ON p.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId LEFT  JOIN Pilot pi ON a.AircraftId = pi.AircraftId WHERE (p.AircraftId, p.MaxRange) IN ( SELECT p2.AircraftId, p2.MaxRange FROM Plane p2 JOIN Aircraft a2 ON p2.AircraftId = a2.AircraftId WHERE a2.SquadronId = s.SquadronId ORDER  BY p2.MaxRange DESC  LIMIT 1  ) ORDER  BY p.MaxRange DESC;`
+	```sql
+	SELECT  s.SquadronName, p.AircraftId, a.ModelName, p.MaxRange, pi.FullName AS PilotName FROM Plane p JOIN Aircraft a ON p.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId LEFT  JOIN Pilot pi ON a.AircraftId = pi.AircraftId WHERE (p.AircraftId, p.MaxRange) IN ( SELECT p2.AircraftId, p2.MaxRange FROM Plane p2 JOIN Aircraft a2 ON p2.AircraftId = a2.AircraftId WHERE a2.SquadronId = s.SquadronId ORDER  BY p2.MaxRange DESC  LIMIT 1  ) ORDER  BY p.MaxRange DESC;
 
 
 -   **Execution + Result Screenshot**: 
@@ -334,7 +340,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`SELECT  fs.Location AS FuelStockLocation, fs.RestockDate, COUNT(DISTINCT a.AircraftId) AS TotalAircraft, COUNT(DISTINCT  CASE  WHEN p.AircraftId IS  NOT  NULL  THEN p.AircraftId END) AS PlaneCount, COUNT(DISTINCT  CASE  WHEN h.AircraftId IS  NOT  NULL  THEN h.AircraftId END) AS HelicopterCount FROM FuelStock fs LEFT  JOIN Aircraft a ON fs.StockId = a.StockId LEFT  JOIN Plane p ON a.AircraftId = p.AircraftId LEFT  JOIN Hellicopter h ON a.AircraftId = h.AircraftId WHERE fs.RestockDate >=  CURRENT_DATE  -  INTERVAL  '30 days'  GROUP  BY fs.Location, fs.RestockDate ORDER  BY TotalAircraft DESC, RestockDate ASC;`
+	```sql
+	SELECT  fs.Location AS FuelStockLocation, fs.RestockDate, COUNT(DISTINCT a.AircraftId) AS TotalAircraft, COUNT(DISTINCT  CASE  WHEN p.AircraftId IS  NOT  NULL  THEN p.AircraftId END) AS PlaneCount, COUNT(DISTINCT  CASE  WHEN h.AircraftId IS  NOT  NULL  THEN h.AircraftId END) AS HelicopterCount FROM FuelStock fs LEFT  JOIN Aircraft a ON fs.StockId = a.StockId LEFT  JOIN Plane p ON a.AircraftId = p.AircraftId LEFT  JOIN Hellicopter h ON a.AircraftId = h.AircraftId WHERE fs.RestockDate >=  CURRENT_DATE  -  INTERVAL  '30 days'  GROUP  BY fs.Location, fs.RestockDate ORDER  BY TotalAircraft DESC, RestockDate ASC;
 
 
 -   **Execution + Result Screenshot**:
@@ -346,7 +353,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Provides readiness status for aircraft in 2025, showing aircraft ID, model name, pilot name, inspection status, training status, and readiness summary ("Ready" or "Not Ready"). Uses date calculations for operational planning in the GUI.
 
 -   **Query**:
-`SELECT  a.AircraftId, a.ModelName, p.FullName AS PilotName, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  THEN  'inspection is overdue'  ELSE  'next inspection in '  ||  CAST(EXTRACT(DAY  FROM AGE(a.NextInspectionDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS InspectionStatus, CASE  WHEN p.NextTrainingDate <  CURRENT_DATE  THEN  'training is overdue'  ELSE  'next training in '  ||  CAST(EXTRACT(DAY  FROM AGE(p.NextTrainingDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS TrainingStatus, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  OR (p.NextTrainingDate <  CURRENT_DATE  AND p.AircraftId IS  NOT  NULL) THEN  'Not Ready'  ELSE  'Ready'  END  AS ReadinessSummary FROM Aircraft a LEFT  JOIN Pilot p ON a.AircraftId = p.AircraftId WHERE  EXTRACT(YEAR  FROM a.NextInspectionDate) =  2025  ORDER  BY a.AircraftId;`
+	```sql
+	SELECT  a.AircraftId, a.ModelName, p.FullName AS PilotName, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  THEN  'inspection is overdue'  ELSE  'next inspection in '  ||  CAST(EXTRACT(DAY  FROM AGE(a.NextInspectionDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS InspectionStatus, CASE  WHEN p.NextTrainingDate <  CURRENT_DATE  THEN  'training is overdue'  ELSE  'next training in '  ||  CAST(EXTRACT(DAY  FROM AGE(p.NextTrainingDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS TrainingStatus, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  OR (p.NextTrainingDate <  CURRENT_DATE  AND p.AircraftId IS  NOT  NULL) THEN  'Not Ready'  ELSE  'Ready'  END  AS ReadinessSummary FROM Aircraft a LEFT  JOIN Pilot p ON a.AircraftId = p.AircraftId WHERE  EXTRACT(YEAR  FROM a.NextInspectionDate) =  2025  ORDER  BY a.AircraftId;
 
 
 -   **Execution + Result Screenshot**: 
@@ -361,7 +369,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Note:** This query uses constrains that ensure CASCADE of relevant information when an aircraft is deleted. see [CONSTRAINTS](#constraints) 4-6 for further explanation.
 
 -   **Query**:
-`DELETE  FROM Aircraft WHERE NextInspectionDate <  CURRENT_DATE  -  INTERVAL  '120 days'  AND AircraftId NOT  IN (SELECT AircraftId FROM Pilot WHERE AircraftId IS  NOT  NULL);`
+	```sql
+ 	ELETE  FROM Aircraft WHERE NextInspectionDate <  CURRENT_DATE  -  INTERVAL  '120 days'  AND AircraftId NOT  IN (SELECT AircraftId FROM Pilot WHERE AircraftId IS  NOT  NULL);
 
 -   **Constraints Screenshot**:
 ![image](https://github.com/user-attachments/assets/d701db06-c268-419b-9564-38519c4733d2)
@@ -379,7 +388,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Removes fuel stocks with less than 2,000,000 liters and not assigned to any aircraft, using a subquery to identify unused stocks.
 
 -   **Query**:
-`DELETE  FROM FuelStock WHERE StockLevel <  2000000  AND StockId NOT  IN (SELECT StockId FROM Aircraft WHERE StockId IS  NOT  NULL);`
+	```sql
+	DELETE  FROM FuelStock WHERE StockLevel <  2000000  AND StockId NOT  IN (SELECT StockId FROM Aircraft WHERE StockId IS  NOT  NULL);
 
 -   **Execution + Result Screenshot**: 
 ![image](https://github.com/user-attachments/assets/ba912782-ffb0-479e-bd7b-b64014670fb2)
@@ -394,7 +404,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Removes equipment weighing over 700 not assigned to any aircraft, using a subquery to identify unassigned equipment.
 
 -   **Query**:
-`DELETE  FROM Equipment WHERE EquipmentId NOT  IN (SELECT EquipmentId FROM Equipped_With) AND Weight >  700;`
+	```sql
+ 	DELETE  FROM Equipment WHERE EquipmentId NOT  IN (SELECT EquipmentId FROM Equipped_With) AND Weight >  700;
 
 -   **Execution + Result Screenshot**: 
 ![image](https://github.com/user-attachments/assets/edf883e7-915b-4072-a644-69a2af9ea9e6)
@@ -411,7 +422,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Increases stock levels by 75% of max capacity for fuel stocks overdue for restocking (before May 25, 2025) and below 30% capacity, using LEAST to cap at MaxCapacity.
 
 -   **Query**:
-`UPDATE FuelStock SET StockLevel = LEAST(StockLevel + (MaxCapacity *  0.75), MaxCapacity) WHERE RestockDate <  CURRENT_DATE  AND (StockLevel / MaxCapacity) *  100  <  30;`
+	```sql
+	UPDATE FuelStock SET StockLevel = LEAST(StockLevel + (MaxCapacity *  0.75), MaxCapacity) WHERE RestockDate <  CURRENT_DATE  AND (StockLevel / MaxCapacity) *  100  <  30;
 
 -   **Execution Screenshot**:
 ![image](https://github.com/user-attachments/assets/103cbd16-2acf-42b2-b33b-7738e2fef4f6)
@@ -429,7 +441,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`UPDATE Pilot SET Rank = CONCAT(Rank, ' (Prob.)') WHERE NextTrainingDate +  120  <  CURRENT_DATE;`
+	```sql
+	UPDATE Pilot SET Rank = CONCAT(Rank, ' (Prob.)') WHERE NextTrainingDate +  120  <  CURRENT_DATE;
 
 -   **Execution Screenshot**: 
 ![image](https://github.com/user-attachments/assets/bd894050-5357-410d-84a2-e0892b0abb8a)
@@ -447,7 +460,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`UPDATE Aircraft SET NextInspectionDate = NextInspectionDate +  INTERVAL  '7 days'  *  CEIL((CAST (CURRENT_DATE  - NextInspectionDate as  float)) /  7) WHERE NextInspectionDate <  CURRENT_DATE;`
+	```sql
+	UPDATE Aircraft SET NextInspectionDate = NextInspectionDate +  INTERVAL  '7 days'  *  CEIL((CAST (CURRENT_DATE  - NextInspectionDate as  float)) /  7) WHERE NextInspectionDate <  CURRENT_DATE;
 
 -   **Execution Screenshot**: 
 ![image](https://github.com/user-attachments/assets/6eb67572-44c5-413f-bcb3-564b351ef369)
@@ -469,7 +483,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Ensures BaseLocation in Squadron has at least 5 characters.
 
 -   **Query**:
-`ALTER  TABLE Squadron ADD  CONSTRAINT check_baselocation_length CHECK (LENGTH(BaseLocation) >=  5);`
+	```sql
+	ALTER  TABLE Squadron ADD  CONSTRAINT check_baselocation_length CHECK (LENGTH(BaseLocation) >=  5);
 
 -   **Violation Test**: Attempted to insert BaseLocation = 'Base'.
 -   **Error Screenshot**: 
@@ -481,7 +496,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 **Description**: Ensures Weight in Equipment is positive and not null.
 
 -   **Query**:
-`ALTER  TABLE Equipment ALTER  COLUMN Weight SET  NOT  NULL, ADD  CONSTRAINT check_weight_positive CHECK (Weight >  0);`
+	```sql
+	ALTER  TABLE Equipment ALTER  COLUMN Weight SET  NOT  NULL, ADD  CONSTRAINT check_weight_positive CHECK (Weight >  0);
 
 -   **Violation Test**: Attempted to insert Weight = 0.
 -   **Error Screenshot**: 
@@ -494,7 +510,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`ALTER  TABLE Pilot ALTER  COLUMN Rank SET  DEFAULT  'Lieutenant';`
+	```sql
+	ALTER  TABLE Pilot ALTER  COLUMN Rank SET  DEFAULT  'Lieutenant';
 
 -   **Default Test**: Inserted a row without specifying Rank.
 -   **Result Screenshot**: 
@@ -507,14 +524,16 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`ALTER  TABLE Equipped_With DROP  CONSTRAINT IF EXISTS equipped_with_aircraftid_fkey, ADD  CONSTRAINT equipped_with_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+	```sql
+	ALTER  TABLE Equipped_With DROP  CONSTRAINT IF EXISTS equipped_with_aircraftid_fkey, ADD  CONSTRAINT equipped_with_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;
 
 ### Constraint 5: ON DELETE CASCADE on Hellicopter.AircraftId
 
 **Description**: Deletes corresponding records in Hellicopter when an aircraft is deleted from Aircraft. Tested as part of [DELETE Query 1](#delete-query-1-remove-aircraft-with-overdue-inspections).
 
 -   **Query**:
-`ALTER  TABLE Hellicopter DROP  CONSTRAINT IF EXISTS hellicopter_aircraftid_fkey, ADD  CONSTRAINT hellicopter_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+	```sql
+	ALTER  TABLE Hellicopter DROP  CONSTRAINT IF EXISTS hellicopter_aircraftid_fkey, ADD  CONSTRAINT hellicopter_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;
 
 ### Constraint 6: ON DELETE CASCADE on Plane.AircraftId
 
@@ -522,7 +541,8 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
 
 
 -   **Query**:
-`ALTER  TABLE Plane DROP  CONSTRAINT IF EXISTS plane_aircraftid_fkey, ADD  CONSTRAINT plane_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+	```sql
+	ALTER  TABLE Plane DROP  CONSTRAINT IF EXISTS plane_aircraftid_fkey, ADD  CONSTRAINT plane_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;
 
 
 ## Rollback and Commit
