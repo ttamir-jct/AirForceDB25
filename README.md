@@ -5,12 +5,21 @@
 **Unit:** Air Force Resources Management 
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [ERD (Entity-Relationship Diagram)](#erd-entity-relationship-diagram)
-- [DSD (Data Structure Diagram)](#dsd-data-structure-diagram)
-- [SQL Scripts](#sql-scripts)
-- [Data Insertion Methods](#data-insertion-methods)
-- [Backup and Restore](#backup-and-restore)
+- [Phase 1](#phase-1)
+	- [Introduction](#introduction)
+	- [ERD (Entity-Relationship Diagram)](#erd-entity-relationship-diagram)
+	- [DSD (Data Structure Diagram)](#dsd-data-structure-diagram)
+	- [SQL Scripts](#sql-scripts)
+	- [Data Insertion Methods](#data-insertion-methods)
+	- [Backup and Restore](#backup-and-restore)
+- [Phase 2](#phase-2-database-querying-updates-and-constraints)
+	- [Select Queries](#select-queries)
+	- [Delete Queries](#delete-queries)
+	- [Update Queries](#update-queries)
+	- [Constraints](#constraints)
+	- [Rollback and Commit](#rollback-and-commit)
+
+# Phase 1
 
 ## Introduction
 
@@ -242,4 +251,342 @@ To enhance the realism of the `FuelStock` table, the schema was updated to inclu
     SET StockLevel = LEAST(StockLevel * (RANDOM() * (1.44 - 0.8) + 0.8), MaxCapacity);
 - an updated version of the files 'createTables.sql', 'insertTables.sql' was added to the [scripts](Phase1/Scripts) directory to ensure compatability with the updated schema.
 
+
+# Phase 2: Database Querying, Updates, and Constraints
+
+
+In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DELETE, and UPDATE queries, add constraints for data integrity, and demonstrate transaction management using ROLLBACK and COMMIT. Queries involve multiple tables, subqueries, and date manipulations to provide actionable insights for air force operations.
+
+## SELECT Queries
+📜 **[View `Queries.sql`](Phase2\Queries.sql)**  
+### Query 1: Aircraft Needing Inspection This Month with Squadron Details
+
+**Description**: Identifies aircraft scheduled for inspection in the current month (May 2025), showing aircraft ID, model name, inspection date (year and month), squadron name, and base location. Supports maintenance scheduling in the GUI.
+
+-   **Query**:
+`SELECT  a.AircraftId, a.ModelName, a.NextInspectionDate, EXTRACT(YEAR  FROM a.NextInspectionDate) AS InspectionYear, EXTRACT(MONTH  FROM a.NextInspectionDate) AS InspectionMonth, s.SquadronName, s.BaseLocation FROM Aircraft a JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE  EXTRACT(MONTH  FROM a.NextInspectionDate) =  EXTRACT(MONTH  FROM  CURRENT_DATE) AND  EXTRACT(YEAR  FROM a.NextInspectionDate) =  EXTRACT(YEAR  FROM  CURRENT_DATE) ORDER  BY a.NextInspectionDate;`
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/d7290645-71df-45be-9910-fceda5f0ae75)
+
+
+### Query 2: Pilots with Overdue Training
+
+**Description**: Lists pilots with overdue training, showing pilot ID, name, training date, days overdue, and assigned aircraft model. Uses LEFT JOIN to include unassigned pilots. Helps prioritize retraining in the GUI.
+
+-   **Query**:
+`SELECT  p.PilotId, p.FullName, p.NextTrainingDate, EXTRACT(DAY  FROM AGE(CURRENT_DATE, p.NextTrainingDate)) AS DaysOverdue, a.ModelName AS AssignedAircraft FROM Pilot p LEFT  JOIN Aircraft a ON p.AircraftId = a.AircraftId WHERE p.NextTrainingDate <  CURRENT_DATE  ORDER  BY DaysOverdue DESC;`
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/b044f4ae-f355-41c2-9463-6b696d6ff2d8)
+
+
+### Query 3: Fuel Stocks Needing Restocking Soon
+
+**Description**: Identifies fuel stocks needing restocking within 7 days (from May 25, 2025), showing stock ID, location, stock level, restock date, fuel type, and aircraft count. Supports fuel management in the GUI.
+
+-   **Query**:
+`SELECT  fs.StockId, fs.Location, fs.StockLevel, fs.RestockDate, ft.FuelTypeName, (SELECT  COUNT(*) FROM Aircraft a WHERE a.StockId = fs.StockId) AS AircraftCount FROM FuelStock fs JOIN FuelType ft ON fs.FuelTypeId = ft.FuelTypeId WHERE fs.RestockDate <=  CURRENT_DATE  +  INTERVAL  '7 days'  AND fs.RestockDate >=  CURRENT_DATE  ORDER  BY fs.RestockDate;`
+
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/888693c1-14ad-4139-b5fe-901cdd96d48c)
+
+
+### Query 4: Average Equipment Weight per Aircraft Model
+
+**Description**: Calculates average equipment weight per aircraft model, showing model name, aircraft count, and average weight. Uses GROUP BY and HAVING to filter models with equipment. Aids load analysis in the GUI.
+
+-   **Query**:
+`SELECT  a.ModelName, COUNT(DISTINCT ew.AircraftId) AS AircraftCount, ROUND(AVG(e.Weight * ew.Quantity), 2) AS AvgEquipmentWeight FROM Aircraft a LEFT  JOIN Equipped_With ew ON a.AircraftId = ew.AircraftId LEFT  JOIN Equipment e ON ew.EquipmentId = e.EquipmentId GROUP  BY a.ModelName HAVING  COUNT(DISTINCT ew.AircraftId) >  0  ORDER  BY AvgEquipmentWeight DESC;`
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/4ccce907-a2d1-4997-9961-d0ede3d4b925)
+
+
+### Query 5: Helicopters with Above-Average Boarding Capacity
+
+**Description**: Lists helicopters with boarding capacity above the average, showing helicopter ID, model name, capacity, and squadron name. Uses a subquery to calculate the average. Supports troop transport planning in the GUI.
+
+-   **Query**:
+`SELECT  h.AircraftId, a.ModelName, h.BoardingCapacity, s.SquadronName FROM Hellicopter h JOIN Aircraft a ON h.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId WHERE h.BoardingCapacity > ( SELECT  AVG(BoardingCapacity) FROM Hellicopter ) ORDER  BY h.BoardingCapacity DESC;`
+
+
+-   **Execution + Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/f9cfc1c7-b7ff-4033-9eb6-99cbb653bce9)
+
+
+### Query 6: Planes with the Longest Range per Squadron
+
+**Description**: Identifies the plane with the longest range in each squadron, showing squadron name, aircraft ID, model name, range, and pilot name. Uses a nested subquery with LIMIT 1. Supports long-range mission planning in the GUI.
+
+-   **Query**:
+`SELECT  s.SquadronName, p.AircraftId, a.ModelName, p.MaxRange, pi.FullName AS PilotName FROM Plane p JOIN Aircraft a ON p.AircraftId = a.AircraftId JOIN Squadron s ON a.SquadronId = s.SquadronId LEFT  JOIN Pilot pi ON a.AircraftId = pi.AircraftId WHERE (p.AircraftId, p.MaxRange) IN ( SELECT p2.AircraftId, p2.MaxRange FROM Plane p2 JOIN Aircraft a2 ON p2.AircraftId = a2.AircraftId WHERE a2.SquadronId = s.SquadronId ORDER  BY p2.MaxRange DESC  LIMIT 1  ) ORDER  BY p.MaxRange DESC;`
+
+
+-   **Execution + Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/b0856a67-99d2-45da-9b7c-a4215bbc5af8)
+
+
+### Query 7: Aircraft and Helicopter Usage per Fuel Stock
+
+**Description**: Shows aircraft and helicopter usage for fuel stocks restocked in the last 30 days (from May 25, 2025), displaying location, restock date, total aircraft, plane count, and helicopter count. Uses GROUP BY and ORDER BY. Aids fuel allocation in the GUI.
+
+
+-   **Query**:
+`SELECT  fs.Location AS FuelStockLocation, fs.RestockDate, COUNT(DISTINCT a.AircraftId) AS TotalAircraft, COUNT(DISTINCT  CASE  WHEN p.AircraftId IS  NOT  NULL  THEN p.AircraftId END) AS PlaneCount, COUNT(DISTINCT  CASE  WHEN h.AircraftId IS  NOT  NULL  THEN h.AircraftId END) AS HelicopterCount FROM FuelStock fs LEFT  JOIN Aircraft a ON fs.StockId = a.StockId LEFT  JOIN Plane p ON a.AircraftId = p.AircraftId LEFT  JOIN Hellicopter h ON a.AircraftId = h.AircraftId WHERE fs.RestockDate >=  CURRENT_DATE  -  INTERVAL  '30 days'  GROUP  BY fs.Location, fs.RestockDate ORDER  BY TotalAircraft DESC, RestockDate ASC;`
+
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/b37feb91-3d45-4085-af68-089bb3ad961e)
+
+
+### Query 8: Monthly Inspection and Training Schedule with Readiness Status
+
+**Description**: Provides readiness status for aircraft in 2025, showing aircraft ID, model name, pilot name, inspection status, training status, and readiness summary ("Ready" or "Not Ready"). Uses date calculations for operational planning in the GUI.
+
+-   **Query**:
+`SELECT  a.AircraftId, a.ModelName, p.FullName AS PilotName, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  THEN  'inspection is overdue'  ELSE  'next inspection in '  ||  CAST(EXTRACT(DAY  FROM AGE(a.NextInspectionDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS InspectionStatus, CASE  WHEN p.NextTrainingDate <  CURRENT_DATE  THEN  'training is overdue'  ELSE  'next training in '  ||  CAST(EXTRACT(DAY  FROM AGE(p.NextTrainingDate, CURRENT_DATE)) AS TEXT) ||  ' days'  END  AS TrainingStatus, CASE  WHEN a.NextInspectionDate <  CURRENT_DATE  OR (p.NextTrainingDate <  CURRENT_DATE  AND p.AircraftId IS  NOT  NULL) THEN  'Not Ready'  ELSE  'Ready'  END  AS ReadinessSummary FROM Aircraft a LEFT  JOIN Pilot p ON a.AircraftId = p.AircraftId WHERE  EXTRACT(YEAR  FROM a.NextInspectionDate) =  2025  ORDER  BY a.AircraftId;`
+
+
+-   **Execution + Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/504d2b13-239f-4720-8e64-79101473286f)
+
+
+## DELETE Queries
+📜 **[View `Queries.sql`](Phase2\Queries.sql)**  
+### DELETE Query 1: Remove Aircraft with Overdue Inspections
+
+**Description**: Removes aircraft with inspections overdue by more than 120 days (before May 25, 2025), excluding those assigned to pilots. Uses ON DELETE CASCADE to remove associated records in Equipped_With, Hellicopter, and Plane tables.
+**Note:** This query uses constrains that ensure CASCADE of relevant information when an aircraft is deleted. see [CONSTRAINTS](#constraints) 4-6 for further explanation.
+
+-   **Query**:
+`DELETE  FROM Aircraft WHERE NextInspectionDate <  CURRENT_DATE  -  INTERVAL  '120 days'  AND AircraftId NOT  IN (SELECT AircraftId FROM Pilot WHERE AircraftId IS  NOT  NULL);`
+
+-   **Constraints Screenshot**:
+![image](https://github.com/user-attachments/assets/d701db06-c268-419b-9564-38519c4733d2)
+
+-   **Execution + Result Screenshot**:
+![image](https://github.com/user-attachments/assets/6b36dbbb-9a00-47c0-8aa4-47564c2a3f0a)
+
+-   **Before State**: Aircraft had 800 rows, Helicopter and Plane had 400 each.
+-   **After State**: Aircraft (783 rows), Plane (385 rows), Helicopter (398 rows)
+![image](https://github.com/user-attachments/assets/686c9728-0ec2-4dfa-a857-365c9a3279e3)
+
+
+### DELETE Query 2: Remove Nearly Empty Fuel Stocks Not Used by Aircraft
+
+**Description**: Removes fuel stocks with less than 2,000,000 liters and not assigned to any aircraft, using a subquery to identify unused stocks.
+
+-   **Query**:
+`DELETE  FROM FuelStock WHERE StockLevel <  2000000  AND StockId NOT  IN (SELECT StockId FROM Aircraft WHERE StockId IS  NOT  NULL);`
+
+-   **Execution + Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/ba912782-ffb0-479e-bd7b-b64014670fb2)
+
+-   **Before State**: FuelStock had 400 rows.
+-   **After State**: 7 rows deleted 
+![image](https://github.com/user-attachments/assets/76347394-0f19-49d4-9d71-da6edff83871)
+
+
+### DELETE Query 3: Remove Large Equipment Not Assigned to Any Aircraft
+
+**Description**: Removes equipment weighing over 700 not assigned to any aircraft, using a subquery to identify unassigned equipment.
+
+-   **Query**:
+`DELETE  FROM Equipment WHERE EquipmentId NOT  IN (SELECT EquipmentId FROM Equipped_With) AND Weight >  700;`
+
+-   **Execution + Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/edf883e7-915b-4072-a644-69a2af9ea9e6)
+
+-   **Before State**: Equipment had 400 rows.
+-   **After State**: 21 rows deleted
+![image](https://github.com/user-attachments/assets/fbb725fe-38a1-472b-9856-24fd8067f210)
+
+
+## UPDATE Queries
+📜 **[View `Queries.sql`](Phase2\Queries.sql)**  
+### UPDATE Query 1: Increase Fuel Stock Levels for Overdue Restocks Below 30%
+
+**Description**: Increases stock levels by 75% of max capacity for fuel stocks overdue for restocking (before May 25, 2025) and below 30% capacity, using LEAST to cap at MaxCapacity.
+
+-   **Query**:
+`UPDATE FuelStock SET StockLevel = LEAST(StockLevel + (MaxCapacity *  0.75), MaxCapacity) WHERE RestockDate <  CURRENT_DATE  AND (StockLevel / MaxCapacity) *  100  <  30;`
+
+-   **Execution Screenshot**:
+![image](https://github.com/user-attachments/assets/103cbd16-2acf-42b2-b33b-7738e2fef4f6)
+
+-   **Before State**: 
+![image](https://github.com/user-attachments/assets/67868f87-5d74-4c01-bfb6-9e74f5e7c5b2)
+
+-   **After State**: Query now returns empty as all stocks updated 
+![image](https://github.com/user-attachments/assets/a6cae2a3-0bc7-41ff-bde5-9dcef42c2c68)
+
+
+### UPDATE Query 2: Update Pilot Ranks for Those with Overdue Training
+
+**Description**: Appends "(Prob.)" to ranks of pilots with training overdue by more than 120 days (before May 25, 2025).
+
+
+-   **Query**:
+`UPDATE Pilot SET Rank = CONCAT(Rank, ' (Prob.)') WHERE NextTrainingDate +  120  <  CURRENT_DATE;`
+
+-   **Execution Screenshot**: 
+![image](https://github.com/user-attachments/assets/bd894050-5357-410d-84a2-e0892b0abb8a)
+
+-   **Before State**:
+![image](https://github.com/user-attachments/assets/61a72c4e-b77e-4978-9f4b-d511603c5a7f)
+
+-   **After State**: 
+![image](https://github.com/user-attachments/assets/e7dd6016-ef16-4197-ba8d-25fc85b22b5a)
+
+
+### UPDATE Query 3: Adjust Inspection Dates
+
+**Description**: Reschedules overdue aircraft inspections (before May 25, 2025) to the same day of the week in the upcoming week.
+
+
+-   **Query**:
+`UPDATE Aircraft SET NextInspectionDate = NextInspectionDate +  INTERVAL  '7 days'  *  CEIL((CAST (CURRENT_DATE  - NextInspectionDate as  float)) /  7) WHERE NextInspectionDate <  CURRENT_DATE;`
+
+-   **Execution Screenshot**: 
+![image](https://github.com/user-attachments/assets/6eb67572-44c5-413f-bcb3-564b351ef369)
+
+-   **Before State**:
+![image](https://github.com/user-attachments/assets/786b5159-37b3-4688-a712-30e3ac858184)
+
+-   **After State**: Dates pushed forward by one week from May 19, 2025 
+![image](https://github.com/user-attachments/assets/a86ff04b-14a8-4a9e-9d9c-1251674b375f)
+
+
+## Constraints
+📜 **[View `Constraints.sql`](Phase2\Constraints.sql)**
+**Run Screenshot:**
+![image](https://github.com/user-attachments/assets/524614af-e09d-458d-b8ef-7360db178eda)
+
+### Constraint 1: CHECK on Squadron.BaseLocation
+
+**Description**: Ensures BaseLocation in Squadron has at least 5 characters.
+
+-   **Query**:
+`ALTER  TABLE Squadron ADD  CONSTRAINT check_baselocation_length CHECK (LENGTH(BaseLocation) >=  5);`
+
+-   **Violation Test**: Attempted to insert BaseLocation = 'Base'.
+-   **Error Screenshot**: 
+![image](https://github.com/user-attachments/assets/a306d1c7-b371-4b79-9241-66a2240c64f6)
+
+
+### Constraint 2: CHECK on Equipment.Weight
+
+**Description**: Ensures Weight in Equipment is positive and not null.
+
+-   **Query**:
+`ALTER  TABLE Equipment ALTER  COLUMN Weight SET  NOT  NULL, ADD  CONSTRAINT check_weight_positive CHECK (Weight >  0);`
+
+-   **Violation Test**: Attempted to insert Weight = 0.
+-   **Error Screenshot**: 
+![image](https://github.com/user-attachments/assets/c458f638-f3ad-4fad-bd02-80a921de4c4d)
+
+
+### Constraint 3: DEFAULT on Pilot.Rank
+
+**Description**: Sets default rank of 'Lieutenant' for Pilot.Rank.
+
+
+-   **Query**:
+`ALTER  TABLE Pilot ALTER  COLUMN Rank SET  DEFAULT  'Lieutenant';`
+
+-   **Default Test**: Inserted a row without specifying Rank.
+-   **Result Screenshot**: 
+![image](https://github.com/user-attachments/assets/446b935a-4d89-4782-953c-118f1712be3e)
+
+
+### Constraint 4: ON DELETE CASCADE on Equipped_With
+
+**Description**: Deletes equipment assignments in Equipped_With when an aircraft is deleted from Aircraft. Tested as part of [DELETE Query 1](#delete-query-1-remove-aircraft-with-overdue-inspections).
+
+
+-   **Query**:
+`ALTER  TABLE Equipped_With DROP  CONSTRAINT IF EXISTS equipped_with_aircraftid_fkey, ADD  CONSTRAINT equipped_with_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+
+### Constraint 5: ON DELETE CASCADE on Hellicopter.AircraftId
+
+**Description**: Deletes corresponding records in Hellicopter when an aircraft is deleted from Aircraft. Tested as part of [DELETE Query 1](#delete-query-1-remove-aircraft-with-overdue-inspections).
+
+-   **Query**:
+`ALTER  TABLE Hellicopter DROP  CONSTRAINT IF EXISTS hellicopter_aircraftid_fkey, ADD  CONSTRAINT hellicopter_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+
+### Constraint 6: ON DELETE CASCADE on Plane.AircraftId
+
+**Description**: Deletes corresponding records in Plane when an aircraft is deleted from Aircraft. Tested as part of [DELETE Query 1](#delete-query-1-remove-aircraft-with-overdue-inspections).
+
+
+-   **Query**:
+`ALTER  TABLE Plane DROP  CONSTRAINT IF EXISTS plane_aircraftid_fkey, ADD  CONSTRAINT plane_aircraftid_fkey FOREIGN KEY (AircraftId) REFERENCES Aircraft (AircraftId) ON  DELETE CASCADE;`
+
+
+## Rollback and Commit
+📜 **[View `RollbackCommit.sql`](Phase2\RollbackCommit.sql)**  
+
+### Part 1: Rollback Demonstration
+
+**Description**: Updates fuel stock levels and reverts changes using ROLLBACK.
+
+-   **Initial State**:
+    
+
+    
+    `SELECT StockId, Location, StockLevel FROM FuelStock WHERE StockId BETWEEN  1  AND  5  ORDER  BY StockId;`
+    
+    -   **Screenshot**:
+    ![image](https://github.com/user-attachments/assets/484095e9-9bb5-4673-87b9-8027c2c91c41)
+
+-   **Update**: Decreases StockLevel by 500,000 for StockId 1-5.
+    
+ 
+    
+    `UPDATE FuelStock SET StockLevel = GREATEST(StockLevel -  500000, 0) WHERE StockId BETWEEN  1  AND  5;`
+    
+    -   **State After Update**:
+    ![image](https://github.com/user-attachments/assets/bf664020-5a54-4710-ab76-049af2725cc0)
+
+-   **Perform ROLLBACK**:
+    
+    
+    `ROLLBACK;`
+    
+    -   **State After ROLLBACK**:
+    ![image](https://github.com/user-attachments/assets/0fd9d3af-ca43-48d5-9e22-517817590d3e)
+
+
+
+### Part 2: Commit Demonstration
+
+**Description**: Updates aircraft inspection dates and saves changes using COMMIT.
+
+-   **Initial State**:
+    
+
+    
+    `SELECT AircraftId, ModelName, NextInspectionDate FROM Aircraft WHERE AircraftId BETWEEN  1  AND  5  ORDER  BY AircraftId;`
+    
+    -   **Screenshot**: 
+    ![image](https://github.com/user-attachments/assets/c057fedd-607a-4aa9-b404-2a63e2ad8624)
+
+-   **Update**: Pushes inspection dates forward by 10 days for AircraftId 1-5.
+    
+
+    
+    `UPDATE Aircraft SET NextInspectionDate = NextInspectionDate +  INTERVAL  '10 days'  WHERE AircraftId BETWEEN  1  AND  5;`
+    
+    -   **State After Update**:
+    ![image](https://github.com/user-attachments/assets/e9da15f2-34df-4424-a2d8-0ef6b5950a5a)
+
+-   **Perform COMMIT**:
+
+    
+    `COMMIT;`
+    
+    -   **State After COMMIT**: 
+    ![image](https://github.com/user-attachments/assets/10f9a156-4d2d-4915-8b18-adeab6cece6a)
 ---
