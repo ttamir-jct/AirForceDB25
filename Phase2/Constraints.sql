@@ -3,15 +3,16 @@ ALTER TABLE Squadron
 ADD CONSTRAINT check_baselocation_length CHECK (LENGTH(BaseLocation) >= 5);
 
 --failed insert:
---INSERT INTO Squadron (SquadronId, SquadronName, BaseLocation)
---VALUES (1001, 'Test Squadron', 'Base');
+INSERT INTO Squadron (SquadronId, SquadronName, BaseLocation)
+VALUES (1001, 'Test Squadron', 'Base');
 
 -- Constraint 2: CHECK on Equipment.Weight that wight is positive
 ALTER TABLE Equipment
 ALTER COLUMN Weight SET NOT NULL,
 ADD CONSTRAINT check_weight_positive CHECK (Weight > 0);
 --failed insert:
-
+INSERT INTO Equipment (EquipmentId, EquipmentType, Weight)
+VALUES (1001, 'Test Radar', 0);
 
 -- Constraint 3: DEFAULT on Pilot.Rank (default to 'Lieutenant')
 ALTER TABLE Pilot
