@@ -18,6 +18,19 @@
 	- [Update Queries](#update-queries)
 	- [Constraints](#constraints)
 	- [Rollback and Commit](#rollback-and-commit)
+-  [Phase 3](#phase-3-database-integration-and-views)
+	- [Integration Process and Decisions](#integration-process-and-decisions)
+	- [Diagrams](#diagrams)
+	- [Schema Modifications](#schema-modifications)
+	- [Data Migration](#data-migration)
+	- [SQL Implementation](#sql-implementation)
+- [Views and Queries](#views-and-queries)
+	- [View 1: Original Department Perspective](#view-1-aircraft_pilot_status-original-department-perspective)
+	- [Query 1 for view 1: Upcoming Inspections and Training](#query-1-for-aircraft_pilot_status-upcoming-inspections-and-training)
+	- [Query 2 for view 1: Aircraft Count by Pilot Rank](#query-2-for-aircraft_pilot_status-aircraft-count-by-pilot-rank)
+	- [View 2: Coworker’s Department Perspective](#view-2-plane_operator_details-coworkers-department-perspective)
+	- [Query 1 for view 2: High Capacity and Long Range Planes](#query-1-for-plane_operator_details-high-capacity-and-long-range-planes)
+	- [Query 2 forview 2: Average Max Distance by Operator Type](#query-2-for-plane_operator_details-average-max-distance-by-operator-type)
 
 # Phase 1
 
@@ -609,4 +622,195 @@ In Phase 2, we enhance the Air Force Resources Database with complex SELECT, DEL
     
     -   **State After COMMIT**: 
     ![image](https://github.com/user-attachments/assets/10f9a156-4d2d-4915-8b18-adeab6cece6a)
+
+# Phase 3: Database Integration and Views
+
+In this phase, we integrated two databases—both under the title of Air Force management —into a unified schema. This involved reversing the backup for the other database to an ERD and creating a revised an unified schema, modifying existing tables, adding new entities, migrating data, creating views for each department's perspective, and writing meaningful queries on those views. Below is a detailed overview of the process, decisions, and outcomes.
+
+## Integration Process and Decisions
+**Second Database's backup and shcema:**
+![image](https://github.com/user-attachments/assets/f20372e6-d37f-4090-a2f1-9520d25a5a32)
+![image](https://github.com/user-attachments/assets/69d91647-bcd0-4565-873a-ece73dcf1861)
+![image](https://github.com/user-attachments/assets/ca3d76b6-43c5-46d5-9338-7cc591c78991)
+![image](https://github.com/user-attachments/assets/7bd398ca-17d6-493c-b4c5-74ff2310d3ff)
+![image](https://github.com/user-attachments/assets/da982080-7e11-48f5-a3b7-a81cf694ccf3)
+![image](https://github.com/user-attachments/assets/609c77b2-4090-40f8-9e49-4112ef64e180)
+![image](https://github.com/user-attachments/assets/4ee8e9fd-a4aa-4e03-ac01-1bb788444122)
+![image](https://github.com/user-attachments/assets/97fb162b-1ccb-40ac-ada4-60f27f1aed40)
+**Foreign Keys:**
+![image](https://github.com/user-attachments/assets/e6d6b495-3179-47da-adf6-fc63589efebc)
+
+
+### Schema Modifications
+
+To align our database with the revised integrated ERD, we made the following changes to the schema:
+
+1.  **Modified Existing Tables**:
+    -   **Aircraft Table**:
+        -   Added BoardingCapacity (moved from Helicopter), productiondate, status, and MaxAltitude.
+        -   Set default values for existing rows: BoardingCapacity = 1, productiondate = '2020-08-06', MaxAltitude = 30000, and status = 'Active'.
+        -   Enforced NOT NULL constraints after populating the data.
+    -   **Pilot Table**:
+        -   Added license_num and experience (from coworker's pilot table).
+        -   Set default values: license_num = 'UNKNOWN-' || PilotId, experience = 5.
+        -   Enforced NOT NULL constraints after populating the data.
+    -   **Helicopter and Plane Tables**:
+        -   Moved BoardingCapacity from Helicopter to Aircraft and dropped the column from Helicopter.
+2.  **Added New Entities**:
+    -   Created four new tables from the coworker's database:
+        -   hub: Stores hub information (hub_id, name, location, iata_code, capacity).
+        -   hangar: Stores hangar information (hangar_id, location, name).
+        -   operator: Stores operator information (operator_id, name, fleet_size, type, hub_id as a foreign key to hub).
+        -   producer: Stores producer information (producer_id, pname, estdate, owner).
+    -   Data for these tables was imported manually.
+3.  **Added Foreign Keys for Relationships**:
+    -   Since all relationships in the integrated ERD are 1:M, we did not create separate relationship tables. Instead, we added foreign keys to the appropriate tables:
+        -   Added operator_id to Pilot (1:M relationship with operator).
+        -   Added operator_id, producer_id, and hangar_id to Aircraft (1:M relationships with operator, producer, and hangar).
+        -   Added hub_id as a foreign key in operator (1:M relationship with hub).
+    -   Populated these foreign keys with randomized values between 1 and 400 (based on the coworker's ID range).
+    -   Enforced foreign key constraints after populating the data.
+
+### Diagrams
+
+Below are the screenshots of the DSD and ERD diagrams created during this phase:
+
+-   **DSD of the New Department**:
+![image](https://github.com/user-attachments/assets/0bcb032c-87b5-4842-9cd1-fe1be0170146)
+
+-   **ERD of the New Department**:
+![image](https://github.com/user-attachments/assets/d7cc307f-1a40-4cfb-91b0-3c1d2e412b9e)
+
+-   **Integrated ERD**: 
+![image](https://github.com/user-attachments/assets/50f2e782-c81f-4b1e-a2dc-6dc8ba97c6e7)
+
+-   **Integrated DSD**: 
+![revised_DSD](https://github.com/user-attachments/assets/ad0038cc-dab8-4e01-b85b-8e059e0dece7)
+
+
+### Data Migration
+
+To migrate the coworker's data into our schema, we followed these steps:
+
+1.  **Set Defaults for Missing Fields**:
+    -   Added defaults to fields in Aircraft, Pilot, and Plane that were missing in the coworker's schema:
+        -   Aircraft: NextInspectionDate (CURRENT_DATE + 60), FuelCapacity (5000), SquadronId (1), StockId (1), FuelTypeId (2).
+        -   Pilot: NextTrainingDate (CURRENT_DATE + 60).
+        -   Plane: prepTime (3).
+2.  **Created Temporary Tables**:
+    -   pilot_temp: To store coworker's pilot data.
+    -   plane_temp: To store coworker's plane data.
+    -   pilot_plane_temp: To store the M:N relationship between pilots and planes (later converted to 1:M).
+3.  **Migrated Data with ID Shift**:
+    -   Shifted IDs by adding 1000 to avoid conflicts (e.g., pilot_id + 1000, plane_id + 1000).
+    -   Inserted coworker's pilot data into Pilot.
+    -   Inserted coworker's plane data into Aircraft and Plane (splitting attributes like maxdistance into MaxRange).
+    -   Converted the M:N pilot_plane relationship to 1:M by assigning each pilot the most recent aircraft (based on assignment_date) and updating the AircraftId in Pilot.
+4.  **Cleaned Up**:
+    -   Dropped the temporary defaults after migration.
+    -   Dropped the temporary tables.
+
+### SQL Implementation
+
+The full schema modification and data migration process is documented in Integrate.sql.
+
+## Views and Queries
+
+We created two views to represent the perspectives of each department, ensuring they focus on their respective domains without mixing data unnecessarily.
+
+### View 1: aircraft_pilot_status (Original Department Perspective)
+
+-   **Description**: This view focuses on aircraft and their assigned pilots, including inspection and training schedules, which are critical for operational readiness in our Air Force context.
+-   **SQL**:
+
+	```sql
+	CREATE  OR REPLACE VIEW public.aircraft_pilot_status AS  
+	SELECT  a.aircraftid, a.modelname, a.nextinspectiondate, p.pilotid, p.fullname, p.rank, p.nexttrainingdate 
+	FROM aircraft a LEFT  JOIN pilot p ON a.aircraftid = p.aircraftid;
+
+-   **Sample Data**: Below is a screenshot of the first 10 rows retrieved using SELECT * FROM aircraft_pilot_status LIMIT 10;.
+
+![image](https://github.com/user-attachments/assets/73243140-d3e3-4c8e-b90e-2038b71c9d9a)
+
+
+### Query 1 for aircraft_pilot_status: Upcoming Inspections and Training
+
+-   **Description**: Identifies aircraft and pilots with inspections or training due within 30 days, aiding in scheduling.
+-   **SQL**:
+
+	```sql
+	`SELECT  *  FROM aircraft_pilot_status
+	 WHERE nextinspectiondate <=  CURRENT_DATE  +  INTERVAL  '30 days'  
+	 OR nexttrainingdate <=  CURRENT_DATE  +  INTERVAL  '30 days'  
+	 LIMIT 10;
+
+-   **Sample Output**:
+    
+ ![image](https://github.com/user-attachments/assets/25b890b9-56ab-4936-badd-f476d765cd7f)
+
+
+### Query 2 for aircraft_pilot_status: Aircraft Count by Pilot Rank
+
+-   **Description**: Counts aircraft by pilot rank to analyze assignment distribution.
+-   **SQL**:
+
+	```sql
+	`SELECT  rank, COUNT(aircraftid) AS aircraft_count
+	 FROM aircraft_pilot_status 
+	 GROUP  BY rank ORDER  BY aircraft_count DESC;
+
+-   **Sample Output**:
+    
+![image](https://github.com/user-attachments/assets/0ec32672-86c8-488c-93c7-ce4ea5de0e8b)
+
+    
+
+### View 2: plane_operator_details (Coworker’s Department Perspective)
+
+-   **Description**: This view focuses on planes (a subset of aircraft), their operators, and hub locations, reflecting the coworker’s focus on operational logistics.
+-   **SQL**:
+
+	```sql
+	CREATE  OR REPLACE VIEW public.plane_operator_details AS  
+	SELECT  a.aircraftid AS aircraft_id, a.modelname AS model, a.boardingcapacity AS capacity, 
+	pl.maxrange AS maxdistance, o.name AS operator_name, o.type AS operator_type, 
+	h.name AS hub_name, h.location AS hub_location 
+	FROM aircraft a JOIN plane pl ON a.aircraftid = pl.aircraftid 
+	JOIN operator o ON a.operator_id = o.operator_id 
+	JOIN hub h ON o.hub_id = h.hub_id;
+
+-   **Sample Data**: Below is a screenshot of the first 10 rows retrieved using SELECT * FROM plane_operator_details LIMIT 10;.
+
+![image](https://github.com/user-attachments/assets/71866e1f-3eec-4bc5-b806-d394b3ae6a60)
+
+
+### Query 1 for plane_operator_details: High Capacity and Long Range Planes
+
+-   **Description**: Identifies planes with capacity greater than 5 and max distance over 3000, useful for long-haul operations.
+-   **SQL**:
+
+	```sql
+	SELECT  *  FROM plane_operator_details 
+	WHERE capacity >  5  AND maxdistance >  3000  
+	LIMIT 10;
+
+-   **Sample Output**:
+![image](https://github.com/user-attachments/assets/4754217a-f1f8-4335-83e4-5031ba7418e4)
+
+
+### Query 2 for plane_operator_details: Average Max Distance by Operator Type
+
+-   **Description**: Calculates the average max distance of planes by operator type to compare operational capabilities.
+-   **SQL**:
+
+	```sql
+	SELECT  operator_type, AVG(maxdistance) AS avg_max_distance 
+	FROM plane_operator_details 
+	GROUP  BY operator_type 
+	ORDER  BY avg_max_distance DESC;
+
+-   **Sample Output**:
+    
+![image](https://github.com/user-attachments/assets/b64b8d10-060f-4d48-b7c0-004856898f0d)
+
 ---
