@@ -813,4 +813,131 @@ We created two views to represent the perspectives of each department, ensuring 
     
 ![image](https://github.com/user-attachments/assets/b64b8d10-060f-4d48-b7c0-004856898f0d)
 
+# Phase 4: PL/pgSQL Programming
+ In this phase, we developed PL/pgSQL programs to manage fuel stocks, pilot training, and aircraft readiness in our integrated database. We created two functions, two procedures, two triggers, and two main programs, ensuring they incorporate elements like cursors, DML operations, branching, loops, exceptions, and records. Below is a detailed overview of the process and outcomes. 
+ 📜 **[View `phase 4` directory](Phase4)**  
+
+ 
+## Programs Overview 
+### Procedure 1: RestockFuelIfLow
+ - **Description**: Restocks a specified fuel stock to 90% of its MaxCapacity if the current level is below 90%, simulating a restock operation.
+ - **Code**: 
+	```sql 
+	-- See RestockFuelIfLow.sql
+
+-   **Execution Evidence**:
+  -   ![צילום מסך 2025-06-05 231803](https://github.com/user-attachments/assets/1ae63dd1-befc-4a04-9a03-b1b24a2e6aa6)
+  -   ![צילום מסך 2025-06-05 232134](https://github.com/user-attachments/assets/1bf63caa-8012-4964-ad65-177224490ba1)
+  -   ![צילום מסך 2025-06-05 232243](https://github.com/user-attachments/assets/5628cffd-9ab7-41a6-9f6c-d89aebe0e97a)
+
+
+
+
+### Function 1: CalculateNextRestockDate
+
+-   **Description**: Estimates the next restock date for a fuel stock when it drops to 30% of MaxCapacity, based on daily consumption by linked aircraft.
+-   **Code**:
+
+	```sql
+	-- See CalculateNextRestockDate.sql
+
+-   **Execution Evidence**:
+    -   Run: SELECT CalculateNextRestockDate(141); (1 aircraft, FuelCapacity = 6580 each, daily consumption is set to a constant 10%) returns:
+    
+        `2035-05-20`
+        
+    -   Screenshots:
+      - ![image](https://github.com/user-attachments/assets/6c3f9d50-460e-4d99-a4cf-a19e040d6af6)
+      -  ![image](https://github.com/user-attachments/assets/55d55dd8-8b9c-48de-9970-ff8d8c0c1fc7)
+        
+  
+
+### Main Program 1: ManageFuelAndTraining
+
+-   **Description**: Processes a list of fuel stocks, restocks them, and updates their RestockDate using the estimated date.
+-   **Code**:
+
+	```sql
+	-- See ManageFuelAndTraining.sql
+
+-   **Execution Evidence**:
+    -   Run outputs:
+      -  ![image](https://github.com/user-attachments/assets/e3b0bef0-f50e-47f2-a123-5a93d123049f)
+
+
+### Procedure 2: UpdatePilotTrainingDates
+
+-   **Description**: Updates NextTrainingDate for specified pilots to 6 months from today, indicating completed training.
+-   **Code**:
+
+	```sql
+	-- See UpdatePilotTrainingDates.sql
+
+-   **Execution Evidence**:
+    -   Screenshots:
+      - ![image](https://github.com/user-attachments/assets/6d266fb0-3b01-4372-b9d3-8af3e0cfdf52)
+      - ![image](https://github.com/user-attachments/assets/bd05d80f-c861-469e-b968-2b41c6bc8211)
+      - ![image](https://github.com/user-attachments/assets/5172cde1-b502-428e-b50f-1b25f7f65175)
+
+  
+
+### Function 2: GetPilotReadinessStatus
+
+-   **Description**: Returns a ref cursor with readiness status for specified pilots, including aircraft assignment and inspection status.
+-   **Code**:
+
+	```sql
+	-- See GetPilotReadinessStatus.sql
+
+-   **Execution Evidence**:  
+    -   Screenshot:
+      - ![image](https://github.com/user-attachments/assets/19bfe969-052f-47f7-9449-fa02a1cf1593)
+  
+
+### Main Program 2: UpdateAndCheckPilotReadiness
+
+-   **Description**: Updates training dates and reports pilot readiness status.
+-   **Code**:
+
+	```sql
+	-- See UpdateAndCheckPilotReadiness.sql
+
+-   **Execution Evidence**:
+    -   Run outputs:
+      - ![image](https://github.com/user-attachments/assets/bb3f9842-1459-4b71-9f83-22205eae427b)
+  
+
+### Trigger 1: LogFuelRestock
+
+-   **Description**: Logs restock operations on FuelStock into FuelRestockLog for auditing.
+-   **Schema Change**: Created FuelRestockLog table.
+  - ![image](https://github.com/user-attachments/assets/520d1d9b-5e82-4048-80b2-e43e77fc8726)
+  
+-   **Code**:
+
+	```sql
+	-- See LogFuelRestock.sql
+
+-   **Execution Evidence**:
+    -   After CALL RestockFuelIfLow(150):  
+      -  ![image](https://github.com/user-attachments/assets/28c11163-78c5-4894-8781-91011f48f413)
+
+
+### Trigger 2: ValidateTrainingDateAndRemoveProbation
+
+-   **Description**: Validates NextTrainingDate updates and removes probation status from Rank if present.
+-   **Code**:
+
+	```sql
+	-- See ValidateTrainingDateAndRemoveProbation.sql
+
+-   **Execution Evidence**:  
+    -   Screenshots of removing probations:
+      -   ![image](https://github.com/user-attachments/assets/cea5af97-f241-4e5e-8dbd-587d3b7e643f)
+      -   ![image](https://github.com/user-attachments/assets/fa7f07f9-ea13-45d5-8c5c-de457ec6dea0)
+      -   ![image](https://github.com/user-attachments/assets/a7e50113-908f-473c-bc7c-8805e7f1c573)
+    -  Screenshots of invalid update error:
+      -  ![image](https://github.com/user-attachments/assets/8d6da13c-fa95-4786-a9c7-c3977ba1d0a5)
+
+
 ---
