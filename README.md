@@ -939,5 +939,67 @@ We created two views to represent the perspectives of each department, ensuring 
     -  Screenshots of invalid update error:
       -  ![image](https://github.com/user-attachments/assets/8d6da13c-fa95-4786-a9c7-c3977ba1d0a5)
 
+# Phase 5: GUI Development
+
+## Instructions
+To set up and run the application:
+1. Install Python from https://www.python.org/ (ensure pip is included).
+2. Download the project and navigate to the direcroty `DBProject/Phase5` of the in a terminal or IntelliJ IDEA. Run `pip install psycopg2-binary` to install the PostgreSQL driver.
+3. Open `gui-app.py` in a text editor or IntelliJ IDEA.
+4. Update the database connection details in `gui-app.py` (host, database, user, password, port) with your PostgreSQL credentials.
+5. Run the script by typing `python gui-app.py` in the terminal or clicking Run in IntelliJ.
+6. The GUI will launch; use the navigation buttons to access each screen.
+
+### Tools Used
+- **Python**: For the application and GUI.
+- **Tkinter**: Built-in Python GUI library.
+- **psycopg2**: PostgreSQL driver.
+
+### Screenshots
+- **Main Navigation Screen**:
+ ![image](https://github.com/user-attachments/assets/aefa9600-82e2-4618-8a2a-9b59789c0108)
+
+- **Pilot Management Screen**:
+  - insert new section:
+![image](https://github.com/user-attachments/assets/55080030-68f7-42fa-88e5-422da3b07c43)
+  - select,update and delete section:
+![image](https://github.com/user-attachments/assets/99ae2bcc-2f37-4d5c-aa68-aeceb97ac94b)
+  - update poop-upwindow - updating license number and training date:
+![image](https://github.com/user-attachments/assets/9e144aa9-f029-4cb9-9f70-2486c557fb15)
+  - updates result:
+![image](https://github.com/user-attachments/assets/141c8959-052c-48f8-9cd4-ad9d9b54e994)
+![image](https://github.com/user-attachments/assets/07f4e7a2-963f-4bd5-ac62-8440d8585e03)
+  - after deleting pilot with id 3:
+![image](https://github.com/user-attachments/assets/2a50f15b-2e0e-4007-8597-c88df823c712)
+![image](https://github.com/user-attachments/assets/8ab79645-055c-42ba-b7cc-37e75372d98d)
+ - after inserting new pilot with id 2
+![image](https://github.com/user-attachments/assets/99219f54-1630-48b0-a9b2-c18492aae888)
+![image](https://github.com/user-attachments/assets/0fd554ca-b319-4d59-8f74-66914c2e3575)
+![image](https://github.com/user-attachments/assets/4033a77b-84d8-4f1d-b5d4-395aaea1b7a6)
+
+
+- **Operator Management Screen**:
+  - insert new section:
+![image](https://github.com/user-attachments/assets/67e10c90-693a-46f5-8a3a-3cc7f1cb9616)
+  - select,update and delete section:
+![image](https://github.com/user-attachments/assets/76832260-1322-4aac-99d0-04f2d3588636)
+
+- **Hub Management Screen**:
+  - insert new section:
+  ![image](https://github.com/user-attachments/assets/770fe9b9-cb8b-422f-a4cd-57df41a1698a)
+  - select,update and delete section:
+![image](https://github.com/user-attachments/assets/5b4ed69e-5685-4902-9aac-ec172b3e57dd)
+- **Operations Dashboard Screen**:
+![image](https://github.com/user-attachments/assets/2462b0ec-25c1-4450-a392-891f6d9719b2)
+
+- calculating next restock date for stock no. 350:
+![image](https://github.com/user-attachments/assets/8158f252-cad2-491b-8748-e22988879d9b)
+- refilling stock no. 350:
+![image](https://github.com/user-attachments/assets/6f615410-58d1-404d-81ae-b1985a6a1fdf)
+- Llongest range planes:
+![image](https://github.com/user-attachments/assets/fe900adb-ed62-4fbb-94ec-399225c02ebc)
+- pilots with overdue training:
+![image](https://github.com/user-attachments/assets/2e147101-74a6-42e4-bce8-ace1f9e5c2a3)
+
 
 ---
